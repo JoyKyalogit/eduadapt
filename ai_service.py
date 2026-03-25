@@ -5,11 +5,22 @@ import re
 from groq import Groq
 from dotenv import load_dotenv
 
+# This handles local development
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-# Use the fastest Groq model for low-latency question generation
+# This handles the Railway deployment
+api_key = os.environ.get("GROQ_API_KEY")
+
+if not api_key:
+    # This helps us debug in the Railway logs
+    print("WARNING: GROQ_API_KEY not found in environment variables.")
+
+client = Groq(api_key=api_key)
+
+# Your models and logic stay exactly the same below this line
 _MODEL = "llama-3.1-8b-instant"
+
+# ... rest of your code (generate_feedback, generate_question, etc.) ...
 
 
 def _call_groq(prompt: str, max_tokens: int = 512) -> str:
