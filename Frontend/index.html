@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EduAdapt</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--navy:#0d1b2a;--navy-mid:#1b2e45;--navy-light:#243d5c;--gold:#c9a84c;--gold-light:#e2c47a;--white:#fff;--bg:#f0f4f8;--muted:#8a9ab0;--border:rgba(201,168,76,.18);--err:#e74c3c;--ok:#27ae60;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);}
+.page{display:none;min-height:100vh;}.page.active{display:flex;}
+
+/* HOME */
+#page-home{flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy-mid),var(--navy));padding:40px 20px;position:relative;overflow:hidden;}
+#page-home::before{content:'';position:absolute;top:-120px;left:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.07),transparent 70%);pointer-events:none;}
+.home-brand{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:6px;text-align:center;}
+.home-tagline{font-size:12px;color:var(--muted);letter-spacing:4px;text-transform:uppercase;margin-bottom:44px;}
+.home-hero{font-family:'Playfair Display',serif;font-size:48px;line-height:1.15;font-weight:700;text-align:center;margin-bottom:16px;max-width:640px;}
+.home-hero span{color:var(--gold);}
+.home-desc{font-size:15px;color:var(--muted);line-height:1.8;text-align:center;max-width:460px;margin-bottom:50px;}
+.home-cards{display:flex;gap:22px;margin-bottom:50px;flex-wrap:wrap;justify-content:center;}
+.home-card{background:rgba(255,255,255,.04);border:1.5px solid rgba(201,168,76,.15);border-radius:14px;padding:32px 28px;width:240px;cursor:pointer;transition:all .25s;text-align:center;}
+.home-card:hover{background:rgba(201,168,76,.07);border-color:var(--gold);transform:translateY(-3px);}
+.home-card-icon{font-size:36px;margin-bottom:14px;}
+.home-card-role{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:7px;}
+.home-card-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.home-card-btn{margin-top:18px;padding:9px 24px;background:var(--gold);color:var(--navy);border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+.home-card:hover .home-card-btn{background:var(--gold-light);}
+
+/* AUTH */
+#page-auth{flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy-mid),var(--navy));padding:40px 20px;}
+.auth-box{background:#fff;border-radius:12px;padding:40px 44px;width:440px;max-width:95vw;}
+.auth-back{color:#7a8a9a;font-size:13px;cursor:pointer;margin-bottom:22px;display:inline-block;transition:color .2s;}
+.auth-back:hover{color:var(--gold);}
+.auth-role-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;background:rgba(13,27,42,.06);border-radius:20px;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:16px;}
+.auth-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);font-weight:700;margin-bottom:5px;}
+.auth-sub{font-size:13px;color:#7a8a9a;margin-bottom:22px;}
+.tab-row{display:flex;border-bottom:2px solid #e8edf2;margin-bottom:20px;}
+.tab-btn{flex:1;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;background:none;border:none;cursor:pointer;color:#a0aab4;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--gold);}
+.tc{display:none;}.tc.active{display:block;}
+.fg{margin-bottom:14px;}
+.lbl{display:block;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.inp{width:100%;padding:11px 13px;border:1.5px solid #e0e7ef;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);background:#fafbfc;outline:none;transition:border-color .2s;}
+.inp:focus{border-color:var(--gold);background:#fff;}
+.sel{width:100%;padding:11px 13px;border:1.5px solid #e0e7ef;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);background:#fafbfc;outline:none;cursor:pointer;}
+.sel:focus{border-color:var(--gold);}
+.btn-primary{width:100%;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-primary:hover{background:var(--navy-light);}
+.btn-gold{background:var(--gold);color:var(--navy);}.btn-gold:hover{background:var(--gold-light);}
+.msg{font-size:13px;margin-top:10px;padding:10px 13px;border-radius:5px;display:none;}
+.msg.ok{background:rgba(39,174,96,.1);color:#1e8449;border:1px solid rgba(39,174,96,.25);display:block;}
+.msg.err{background:rgba(231,76,60,.1);color:#922b21;border:1px solid rgba(231,76,60,.25);display:block;}
+
+/* APP SHELL */
+#page-app{flex-direction:column;}
+.topbar{height:60px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.topbar-brand{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold);font-weight:700;cursor:pointer;letter-spacing:1px;}
+.topbar-nav{display:flex;gap:2px;}
+.nav-btn{padding:6px 15px;border-radius:4px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;}
+.nav-btn:hover{background:var(--navy-light);color:#fff;}
+.nav-btn.active{background:var(--navy-light);color:var(--gold);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.user-badge{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;}
+.user-name{font-size:13px;color:#fff;font-weight:500;}
+.user-role{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.topbar-btn{padding:5px 12px;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.topbar-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* CONTENT */
+.app-body{flex:1;background:var(--bg);overflow-y:auto;}
+.app-inner{max-width:980px;margin:0 auto;padding:28px 24px;}
+.section{display:none;}.section.active{display:block;}
+.section-hd{margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.section-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);font-weight:700;}
+.section-sub{font-size:13px;color:#7a8a9a;margin-top:3px;}
+
+/* CLASS PILLS */
+.pills{display:flex;gap:7px;flex-wrap:wrap;}
+.pill{padding:5px 13px;border-radius:20px;border:1.5px solid #dde4ed;background:#fff;font-size:12px;font-weight:500;color:var(--navy);cursor:pointer;transition:all .2s;}
+.pill.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.pill:hover:not(.active){border-color:var(--gold);}
+
+/* CARDS */
+.card{background:#fff;border-radius:8px;padding:20px;border:1px solid #e8edf2;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.card-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.card-val{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);font-weight:700;}
+.card-sub{font-size:12px;color:#a0aab4;margin-top:3px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+
+/* SCORE BAR */
+.sbar-wrap{display:flex;align-items:center;gap:9px;}
+.sbar{height:5px;border-radius:3px;background:#e8edf2;flex:1;}
+.sbar-fill{height:100%;border-radius:3px;background:var(--gold);transition:width .6s;}
+.sbar-fill.low{background:var(--err);}.sbar-fill.mid{background:#e67e22;}
+.sbar-pct{font-size:12px;font-weight:600;color:var(--navy);min-width:32px;}
+
+/* ASSIGNMENT CARDS */
+.asgn-section-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 7px;}
+.asgn-card{background:#fff;border-radius:7px;padding:14px 18px;border:1px solid #e8edf2;margin-bottom:8px;display:flex;align-items:center;gap:14px;}
+.asgn-left{flex:1;}
+.asgn-title{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:3px;}
+.asgn-meta{font-size:12px;color:#a0aab4;display:flex;gap:10px;flex-wrap:wrap;}
+.asgn-result{font-size:12px;margin-top:4px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px;}
+.b-pending{background:#fef9ec;color:#b7770d;border:1px solid #f5d68a;}
+.b-done{background:#eafaf1;color:#1e8449;border:1px solid #a9dfbf;}
+.b-red{background:#fdedec;color:#922b21;border:1px solid #f1948a;}
+.b-gold{background:#fef9ec;color:#b7770d;border:1px solid #f5d68a;}
+.b-navy{background:rgba(13,27,42,.08);color:var(--navy);border:1px solid rgba(13,27,42,.15);}
+.btn-action{padding:7px 15px;background:var(--gold);color:var(--navy);border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .2s;}
+.btn-action:hover{background:var(--gold-light);}
+.btn-sm{padding:5px 11px;border:none;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+.btn-sm-navy{background:var(--navy);color:#fff;}.btn-sm-red{background:var(--err);color:#fff;}
+
+/* ASSIGNMENT MODAL: multi-question view */
+.q-list{display:flex;flex-direction:column;gap:14px;}
+.q-block{border:1px solid #e8edf2;border-radius:7px;padding:16px;}
+.q-block.submitted{background:#fafbfc;}
+.q-num{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;}
+.q-text{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);line-height:1.5;margin-bottom:10px;}
+.q-textarea{width:100%;padding:10px 12px;border:1.5px solid #e0e7ef;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);resize:none;outline:none;background:#fafbfc;transition:border-color .2s;}
+.q-textarea:focus{border-color:var(--gold);background:#fff;}
+.q-textarea:disabled{background:#f5f7fa;color:#7a8a9a;}
+.q-feedback{margin-top:10px;padding:12px 14px;border-radius:6px;font-size:13px;line-height:1.6;}
+.q-feedback.correct{background:#eafaf1;border:1px solid #a9dfbf;color:#1a5c37;}
+.q-feedback.incorrect{background:#fdedec;border:1px solid #f1948a;color:#922b21;}
+.q-correct-ans{font-size:12px;font-weight:600;color:#1e8449;margin-top:5px;}
+
+/* QUIZ (self-practice) */
+.quiz-config{background:#fff;border-radius:8px;padding:20px;border:1px solid #e8edf2;margin-bottom:16px;}
+.quiz-block{background:#fff;border-radius:8px;padding:24px;border:1px solid #e8edf2;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.q-counter-bar{font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:500;}
+.q-topic-tag{display:inline-block;padding:3px 10px;background:rgba(201,168,76,.1);color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:20px;margin-bottom:13px;}
+.q-question-text{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);line-height:1.5;margin-bottom:12px;}
+.answer-area{width:100%;padding:11px 14px;border:2px solid #e0e7ef;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);outline:none;resize:none;background:#fafbfc;transition:border-color .2s;}
+.answer-area:focus{border-color:var(--gold);background:#fff;}
+.quiz-actions{display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+.btn-submit{padding:10px 24px;background:var(--navy);color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-submit:hover{background:var(--navy-light);}
+.btn-outline{padding:10px 18px;background:transparent;color:var(--navy);border:1.5px solid #dde4ed;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-end{padding:10px 18px;background:transparent;color:var(--err);border:1.5px solid rgba(231,76,60,.3);border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+.timer{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:7px;display:none;}
+.feedback.correct{background:#eafaf1;border:1px solid #a9dfbf;}
+.feedback.incorrect{background:#fdedec;border:1px solid #f1948a;}
+.fb-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.feedback.correct .fb-label{color:#1e8449;}.feedback.incorrect .fb-label{color:#922b21;}
+.fb-text{font-size:13px;color:#2c3e50;line-height:1.7;white-space:pre-wrap;}
+.fb-correct-ans{font-size:12px;font-weight:600;color:#1e8449;margin-top:6px;}
+
+/* PRACTICE LAYOUT */
+.practice-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+.practice-progress-panel{background:#fff;border-radius:8px;border:1px solid #e8edf2;padding:18px;position:sticky;top:80px;}
+.pp-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:13px;}
+.pp-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f4f8;font-size:13px;}
+.pp-row:last-of-type{border-bottom:none;}
+.pp-total{display:flex;justify-content:space-between;padding-top:10px;margin-top:6px;border-top:2px solid #e8edf2;font-size:14px;font-weight:600;color:var(--navy);}
+.past-session-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f4f8;font-size:12px;color:#5a6a7a;}
+.past-session-row:last-child{border-bottom:none;}
+
+/* DATA TABLES */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{text-align:left;padding:10px 13px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;border-bottom:2px solid #e8edf2;background:#fafbfc;}
+.data-table td{padding:11px 13px;font-size:13px;color:var(--navy);border-bottom:1px solid #f2f5f8;vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:#fafbfc;}
+.exp-row{cursor:pointer;user-select:none;}
+.exp-row:hover td{background:#f7f9fc!important;}
+.exp-icon{display:inline-block;margin-right:6px;font-size:10px;color:var(--muted);transition:transform .2s;}
+.exp-icon.open{transform:rotate(90deg);}
+.sub-row{display:none;}
+.sub-row td{background:#fafbfc;padding-left:32px;font-size:12px;color:#5a6a7a;border-bottom:1px solid #f2f5f8;}
+
+/* CHECKLIST */
+.checklist{border:1.5px solid #e0e7ef;border-radius:5px;max-height:175px;overflow-y:auto;background:#fafbfc;}
+.chk-item{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;}
+.chk-item:hover{background:#f0f4f8;}
+.chk-item input{width:14px;height:14px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;}
+.chk-all-row{display:flex;align-items:center;gap:9px;padding:8px 12px;border-bottom:1px solid #e8edf2;background:#f5f7fa;cursor:pointer;}
+
+/* MODE TOGGLE */
+.mode-toggle{display:flex;border:1.5px solid #e0e7ef;border-radius:5px;overflow:hidden;margin-bottom:16px;}
+.mode-btn{flex:1;padding:9px 12px;border:none;background:#fafbfc;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#7a8a9a;transition:all .2s;}
+.mode-btn.active{background:var(--navy);color:#fff;}
+
+/* TOPIC GROUPS */
+.topic-group{margin-bottom:12px;}
+.tg-header{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:var(--navy);color:#fff;border-radius:7px 7px 0 0;cursor:pointer;}
+.tg-title{font-weight:600;font-size:13px;}
+.tg-meta{font-size:12px;color:var(--muted);}
+.tg-body{border:1px solid #e8edf2;border-top:none;border-radius:0 0 7px 7px;overflow:hidden;display:none;}
+.tg-body.open{display:block;}
+
+.loading{text-align:center;padding:28px;color:var(--muted);font-size:14px;}
+.empty{text-align:center;padding:36px 20px;color:var(--muted);}
+.empty-icon{font-size:32px;margin-bottom:9px;}
+.empty-text{font-size:14px;}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:#fff;border-radius:10px;padding:28px;width:580px;max-width:95vw;max-height:88vh;overflow-y:auto;}
+.modal-title{font-family:'Playfair Display',serif;font-size:19px;color:var(--navy);font-weight:700;margin-bottom:3px;}
+.modal-sub{font-size:12px;color:#7a8a9a;margin-bottom:16px;}
+.modal-actions{display:flex;gap:10px;margin-top:16px;position:sticky;bottom:0;background:#fff;padding-top:10px;}
+.btn-cancel{flex:1;padding:10px;background:#f0f4f8;color:var(--navy);border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
+.spinner-dk{border-color:rgba(13,27,42,.15);border-top-color:var(--navy);}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:768px){.g4{grid-template-columns:1fr 1fr;}.g2,.g3,.practice-layout{grid-template-columns:1fr;}.topbar-nav{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="home-brand">EduAdapt</div>
+  <div class="home-tagline">Intelligent Learning Platform</div>
+  <h1 class="home-hero">Learning that <span>adapts to you.</span></h1>
+  <p class="home-desc">AI-powered quizzes, personalised feedback and real-time analytics for teachers and students.</p>
+  <div class="home-cards">
+    <div class="home-card" onclick="goToAuth('student')">
+      <div class="home-card-icon">🎓</div>
+      <div class="home-card-role">Student</div>
+      <div class="home-card-desc">Take assigned quizzes, practise independently and track your progress.</div>
+      <button class="home-card-btn">Get Started</button>
+    </div>
+    <div class="home-card" onclick="goToAuth('teacher')">
+      <div class="home-card-icon">📊</div>
+      <div class="home-card-role">Teacher</div>
+      <div class="home-card-desc">Assign quizzes, monitor performance and identify struggling students.</div>
+      <button class="home-card-btn">Get Started</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="page-auth" class="page">
+  <div class="auth-box">
+    <div class="auth-back" onclick="goHome()">← Back</div>
+    <div class="auth-role-badge" id="auth-role-badge">Student</div>
+    <div class="auth-title" id="auth-title">Student Portal</div>
+    <div class="auth-sub">Sign in or create your account to continue</div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('register')">Register</button>
+    </div>
+    <div id="tc-login" class="tc active">
+      <div class="fg"><label class="lbl">Email</label><input id="login-email" class="inp" type="email" placeholder="your@email.com"/></div>
+      <div class="fg"><label class="lbl">Password</label><input id="login-password" class="inp" type="password" placeholder="Your password"/></div>
+      <button class="btn-primary btn-gold" onclick="handleLogin()">Sign In</button>
+      <div id="login-msg" class="msg"></div>
+    </div>
+    <div id="tc-register" class="tc">
+      <div class="fg"><label class="lbl">Full Name</label><input id="reg-name" class="inp" type="text" placeholder="Your full name"/></div>
+      <div class="fg"><label class="lbl">Email</label><input id="reg-email" class="inp" type="email" placeholder="your@email.com"/></div>
+      <div class="fg"><label class="lbl">Password</label><input id="reg-password" class="inp" type="password" placeholder="Min. 6 characters"/></div>
+      <div class="fg" id="reg-class-group"><label class="lbl">Class / Year Group</label><input id="reg-class" class="inp" type="text" placeholder="e.g. Form 3A, Grade 10"/></div>
+      <button class="btn-primary" onclick="handleRegister()">Create Account</button>
+      <div id="reg-msg" class="msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="page-app" class="page">
+  <div class="topbar">
+    <div class="topbar-brand" onclick="goHome()">EduAdapt</div>
+    <div class="topbar-nav">
+      <!-- Student -->
+      <button class="nav-btn active" id="nav-assignments" onclick="showSection('assignments')">Assignments</button>
+      <button class="nav-btn" id="nav-practice" onclick="showSection('practice')">Self-Practice</button>
+      <button class="nav-btn" id="nav-progress" onclick="showSection('progress')">My Progress</button>
+      <!-- Teacher -->
+      <button class="nav-btn" id="nav-assign" onclick="showSection('assign')" style="display:none">Assign Quiz</button>
+      <button class="nav-btn" id="nav-quizzes" onclick="showSection('quizzes')" style="display:none">Quizzes</button>
+      <button class="nav-btn" id="nav-analytics" onclick="showSection('analytics')" style="display:none">Analytics</button>
+    </div>
+    <div class="topbar-right">
+      <div class="user-badge" id="user-initials">?</div>
+      <div><div class="user-name" id="user-name-display">—</div><div class="user-role" id="user-role-display">—</div></div>
+      <button class="topbar-btn" onclick="goHome()">Switch Account</button>
+    </div>
+  </div>
+
+  <div class="app-body"><div class="app-inner">
+
+    <!-- ── STUDENT: ASSIGNMENTS ── -->
+    <div id="section-assignments" class="section active">
+      <div class="section-hd">
+        <div><div class="section-title">My Assignments</div><div class="section-sub">Quizzes assigned by your teachers</div></div>
+      </div>
+      <div id="assignments-list"><div class="loading">Loading...</div></div>
+    </div>
+
+    <!-- ── STUDENT: SELF-PRACTICE ── -->
+    <div id="section-practice" class="section">
+      <div class="section-hd">
+        <div><div class="section-title">Self-Practice</div><div class="section-sub">Personal practice — results visible only to you</div></div>
+      </div>
+      <div class="practice-layout">
+        <div>
+          <div class="quiz-config">
+            <div class="card-label" style="margin-bottom:13px">Configure Session</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+              <div class="fg" style="margin:0"><label class="lbl">Topic</label><input id="quiz-topic" class="inp" type="text" placeholder="e.g. Python"/></div>
+              <div class="fg" style="margin:0"><label class="lbl">Difficulty</label><select id="quiz-diff" class="sel"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></div>
+              <div class="fg" style="margin:0"><label class="lbl">No. of Questions</label><input id="quiz-num" class="inp" type="number" value="5" min="1" max="20"/></div>
+            </div>
+            <button class="btn-primary btn-gold" id="btn-start-session" onclick="startPracticeSession()" style="width:auto;padding:10px 22px">Start Session</button>
+            <div id="quiz-msg" class="msg"></div>
+          </div>
+          <div id="practice-quiz-area" style="display:none">
+            <div class="quiz-block">
+              <div class="q-counter-bar" id="q-counter">Question 1 of 5</div>
+              <div class="q-topic-tag" id="q-topic-tag">Topic</div>
+              <div class="q-question-text" id="q-question">Loading...</div>
+              <textarea class="answer-area" id="q-answer" rows="3" placeholder="Type your answer..."></textarea>
+              <div class="quiz-actions">
+                <button class="btn-submit" id="btn-submit-answer" onclick="submitPracticeAnswer()">Submit</button>
+                <button class="btn-outline" id="btn-skip" onclick="skipQuestion()">Skip</button>
+                <button class="btn-end" onclick="endPracticeSession()">End Session</button>
+                <span class="timer" id="q-timer">0s</span>
+              </div>
+              <div class="feedback" id="feedback-box">
+                <div class="fb-label" id="fb-label"></div>
+                <div class="fb-text" id="fb-text"></div>
+                <div class="fb-correct-ans" id="fb-correct-ans"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Progress panel -->
+        <div class="practice-progress-panel">
+          <div class="pp-title">Session Progress</div>
+          <div id="practice-session-stats">
+            <div class="empty" style="padding:16px"><div class="empty-icon" style="font-size:24px">—</div><div class="empty-text">Start a session to see your score</div></div>
+          </div>
+          <div id="practice-history-section" style="display:none">
+            <div class="pp-title" style="margin-top:16px;padding-top:14px;border-top:1px solid #e8edf2">Past Sessions</div>
+            <div id="practice-history"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STUDENT: MY PROGRESS ── -->
+    <div id="section-progress" class="section">
+      <div class="section-hd">
+        <div><div class="section-title">My Progress</div><div class="section-sub">Assignment performance only</div></div>
+      </div>
+      <div class="g3" style="margin-bottom:18px" id="progress-insights"></div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+          <div class="card-label" style="margin:0">Assignment Scores</div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <select id="filter-topic" class="sel" style="width:145px" onchange="loadAssignmentHistory()"><option value="">All Topics</option></select>
+            <select id="filter-period" class="sel" style="width:145px" onchange="loadAssignmentHistory()">
+              <option value="">All Time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option>
+            </select>
+          </div>
+        </div>
+        <div id="assignment-history"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- ── TEACHER: ASSIGN QUIZ ── -->
+    <div id="section-assign" class="section">
+      <div class="section-hd">
+        <div><div class="section-title">Assign a Quiz</div><div class="section-sub">Create and send questions to your students</div></div>
+      </div>
+      <div class="card">
+        <div class="fg"><label class="lbl">Assignment Title</label><input id="assign-title" class="inp" type="text" placeholder="e.g. Week 3 Python Quiz"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+          <div class="fg" style="margin:0"><label class="lbl">Topic</label><input id="assign-topic" class="inp" type="text" placeholder="e.g. Python"/></div>
+          <div class="fg" style="margin:0"><label class="lbl">Difficulty</label><select id="assign-diff" class="sel"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></div>
+          <div class="fg" style="margin:0"><label class="lbl">No. of Questions</label><input id="assign-num-q" class="inp" type="number" value="1" min="1" max="20"/></div>
+          <div class="fg" style="margin:0"><label class="lbl">Deadline (optional)</label><input id="assign-deadline" class="inp" type="datetime-local"/></div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Question Mode</label>
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="mode-ai" onclick="setQMode('ai')">AI Generate</button>
+            <button class="mode-btn" id="mode-manual" onclick="setQMode('manual')">Manual Entry</button>
+          </div>
+        </div>
+        <div id="manual-fields" style="display:none">
+          <div style="background:#f7f9fc;border-radius:7px;padding:14px;border:1px solid #e8edf2;margin-bottom:14px">
+            <div class="card-label" style="margin-bottom:12px">Questions</div>
+            <div id="manual-questions-list"></div>
+            <button onclick="addManualQuestion()" style="margin-top:9px;padding:7px 14px;background:transparent;border:1.5px dashed #c0ccd8;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:12px;color:#7a8a9a;cursor:pointer;width:100%">+ Add another question</button>
+          </div>
+        </div>
+        <div class="fg"><label class="lbl">Filter by Class</label><select id="assign-class-filter" class="sel" onchange="filterStudentsByClass()"><option value="">— Select a class —</option></select></div>
+        <div class="fg" id="students-fg" style="display:none"><label class="lbl">Select Students</label><div class="checklist" id="assign-students-list"></div></div>
+        <button class="btn-primary btn-gold" id="btn-assign" onclick="createAssignment()">Assign to Selected Students</button>
+        <div id="assign-msg" class="msg"></div>
+      </div>
+    </div>
+
+    <!-- ── TEACHER: QUIZZES ── -->
+    <div id="section-quizzes" class="section">
+      <div class="section-hd">
+        <div><div class="section-title">Quizzes</div><div class="section-sub">All assignments you have set</div></div>
+        <div class="pills" id="qfilter-pills"></div>
+      </div>
+      <div id="quizzes-content"><div class="loading">Loading...</div></div>
+    </div>
+
+    <!-- ── TEACHER: ANALYTICS ── -->
+    <div id="section-analytics" class="section">
+      <div class="section-hd">
+        <div><div class="section-title">Analytics</div><div class="section-sub">Your students' submitted assignments</div></div>
+        <div class="pills" id="analytics-pills"></div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-label" style="margin-bottom:12px">Results by Assignment</div>
+        <div id="teacher-assignments-content"><div class="loading">Loading...</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-label" style="margin-bottom:10px">Struggling Students</div>
+          <div style="display:flex;gap:9px;align-items:center;margin-bottom:10px">
+            <span style="font-size:12px;color:#7a8a9a">Below</span>
+            <input id="threshold-input" type="number" value="0.6" min="0" max="1" step="0.05" style="padding:6px 9px;border:1.5px solid #e0e7ef;border-radius:5px;width:64px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none"/>
+            <button class="btn-submit" style="padding:7px 14px;font-size:12px" onclick="loadStruggling()">Run</button>
+          </div>
+          <div id="struggling-content"><div style="color:#a0aab4;font-size:13px">Click Run to load</div></div>
+        </div>
+        <div class="card">
+          <div class="card-label" style="margin-bottom:10px">Hardest Topic</div>
+          <div id="hardest-content"><div class="loading">Loading...</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:10px">Most Improved (by Topic)</div>
+        <div id="improved-content"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+  </div></div><!-- end app-inner / app-body -->
+</div>
+
+<!-- ASSIGNMENT ATTEMPT MODAL -->
+<div class="overlay" id="attempt-modal">
+  <div class="modal" style="width:620px">
+    <div class="modal-title" id="modal-title-text">Assignment</div>
+    <div class="modal-sub" id="modal-from">Assigned by your teacher</div>
+    <div id="modal-progress" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
+    <div id="modal-q-list" class="q-list"></div>
+    <div class="modal-actions">
+      <button class="btn-submit" id="modal-submit-btn" onclick="submitAllAnswers()" style="flex:2">Submit All Answers</button>
+      <button class="btn-cancel" id="modal-done-btn" onclick="closeModal()" style="display:none">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Question</div>
+    <div class="modal-sub">Update before the student attempts it</div>
+    <div class="fg"><label class="lbl">Title</label><input id="edit-title" class="inp" type="text"/></div>
+    <div class="fg"><label class="lbl">Question</label><textarea id="edit-question" class="answer-area" rows="3"></textarea></div>
+    <div class="fg"><label class="lbl">Correct Answer</label><input id="edit-answer" class="inp" type="text"/></div>
+    <div id="edit-msg" class="msg"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-submit" id="edit-save-btn" onclick="saveAssignmentEdit()" style="flex:2">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API=window.location.hostname==='127.0.0.1'||window.location.hostname==='localhost'?'http://127.0.0.1:8000':'';
+let currentUser=null;
+let authRole='student';
+let allStudents=[],activeClassFilter='';
+let qMode='ai';
+let timerInterval=null,timerStart=null;
+// Practice state
+let PS={active:false,topic:'',diff:'',total:0,current:0,correct:0,skipped:0,questions:[],history:[]};
+// Assignment modal state
+let modalAssignments=[]; // array of {id, question, index}
+let editingId=null;
+
+window.onload=()=>showPage('home');
+
+// ── Pages ─────────────────────────────────────────────────────────────────
+function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');}
+function goHome(){currentUser=null;showPage('home');}
+function goToAuth(role){
+  authRole=role;
+  document.getElementById('auth-role-badge').textContent=role==='teacher'?'Teacher':'Student';
+  document.getElementById('auth-title').textContent=role==='teacher'?'Teacher Portal':'Student Portal';
+  document.getElementById('reg-class-group').style.display=role==='student'?'block':'none';
+  switchTab('login');showPage('auth');
+}
+function switchTab(t){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='register')));
+  document.getElementById('tc-login').classList.toggle('active',t==='login');
+  document.getElementById('tc-register').classList.toggle('active',t==='register');
+}
+function showMsg(id,txt,type){const el=document.getElementById(id);el.textContent=txt;el.className='msg '+type;}
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+async function handleRegister(){
+  const name=document.getElementById('reg-name').value.trim(),email=document.getElementById('reg-email').value.trim(),password=document.getElementById('reg-password').value;
+  const cls=document.getElementById('reg-class').value.trim()||'General';
+  if(!name||!email||!password) return showMsg('reg-msg','Please fill in all fields.','err');
+  if(password.length<6) return showMsg('reg-msg','Password must be at least 6 characters.','err');
+  try{
+    const body=authRole==='teacher'?{name,email,password}:{name,email,password,class_name:cls};
+    const res=await fetch(`${API}/${authRole==='teacher'?'teachers':'students'}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json();
+    if(!res.ok) return showMsg('reg-msg',data.detail||'Registration failed.','err');
+    showMsg('reg-msg','Account created. You can now sign in.','ok');
+  }catch(e){showMsg('reg-msg','Cannot connect to server.','err');}
+}
+
+async function handleLogin(){
+  const email=document.getElementById('login-email').value.trim(),password=document.getElementById('login-password').value;
+  if(!email||!password) return showMsg('login-msg','Please enter your email and password.','err');
+  try{
+    const res=await fetch(`${API}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,role:authRole})});
+    const data=await res.json();
+    if(!res.ok) return showMsg('login-msg',data.detail||'Login failed.','err');
+    currentUser={id:data.id,name:data.name,role:data.role};
+    enterApp();
+  }catch(e){showMsg('login-msg','Cannot connect to server.','err');}
+}
+
+// ── App init ──────────────────────────────────────────────────────────────
+function enterApp(){
+  showPage('app');
+  document.getElementById('user-name-display').textContent=currentUser.name;
+  document.getElementById('user-role-display').textContent=currentUser.role;
+  document.getElementById('user-initials').textContent=currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const sNav=['assignments','practice','progress'],tNav=['assign','quizzes','analytics'];
+  if(currentUser.role==='teacher'){
+    sNav.forEach(id=>{const b=document.getElementById('nav-'+id);if(b)b.style.display='none';});
+    tNav.forEach(id=>{const b=document.getElementById('nav-'+id);if(b)b.style.display='inline-block';});
+    document.getElementById('section-assignments').classList.remove('active');
+    showSection('assign');loadStudentsList();loadClassFilters();initManualFields();
+  } else {
+    tNav.forEach(id=>{const b=document.getElementById('nav-'+id);if(b)b.style.display='none';});
+    sNav.forEach(id=>{const b=document.getElementById('nav-'+id);if(b)b.style.display='inline-block';});
+    showSection('assignments');loadAssignments();
+    // Load saved practice history from server
+    loadPracticeHistory();
+  }
+}
+
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  const nb=document.getElementById('nav-'+name);if(nb)nb.classList.add('active');
+  if(name==='assignments') loadAssignments();
+  if(name==='progress') loadProgress();
+  if(name==='analytics'){loadClassFilters();loadTeacherAssignments();loadHardest();loadImproved();}
+  if(name==='quizzes'){loadClassFilters();loadQuizzes();}
+  if(name==='assign') loadStudentsList();
+  // Auto-refresh every 60s only for assignments — pause when tab is hidden
+  clearInterval(window._refreshTimer);
+  if(name==='assignments'){
+    window._refreshTimer=setInterval(()=>{
+      if(!document.hidden) loadAssignments();
+    },60000);
+  }
+  if(name==='quizzes'){
+    window._refreshTimer=setInterval(()=>{
+      if(!document.hidden) loadQuizzes();
+    },60000);
+  }
+}
+
+// ── STUDENT: Assignments ──────────────────────────────────────────────────
+async function loadAssignments(){
+  if(!currentUser?.id) return;
+  const el=document.getElementById('assignments-list');el.innerHTML='<div class="loading">Loading...</div>';
+  try{
+    const res=await fetch(`${API}/assignments/student/${currentUser.id}`);
+    const all=await res.json();
+    if(!all.length){el.innerHTML='<div class="empty"><div class="empty-icon">—</div><div class="empty-text">No assignments yet.</div></div>';return;}
+    // Group by base title (strip " (Q1/N)" suffix)
+    const grouped={};
+    all.forEach(a=>{
+      const baseTitle=a.title.replace(/ \(Q\d+\/\d+\)$/,'');
+      if(!grouped[baseTitle]) grouped[baseTitle]={title:baseTitle,topic:a.topic,teacher:a.teacher_name,difficulty:a.difficulty,assigned_at:a.assigned_at,questions:[],status:'pending'};
+      grouped[baseTitle].questions.push(a);
+    });
+    // Determine group status
+    Object.values(grouped).forEach(g=>{
+      const allDone=g.questions.every(q=>q.status==='completed');
+      if(allDone) g.status='completed';
+    });
+    const pending=Object.values(grouped).filter(g=>g.status==='pending');
+    const done=Object.values(grouped).filter(g=>g.status==='completed');
+    let html='';
+
+    const makeTable=(rows,label)=>{
+      if(!rows.length) return '';
+      const isPendingSection=rows[0].status==='pending';
+      return `<div class="asgn-section-lbl" style="margin-bottom:8px">${label}</div>
+        <table class="data-table" style="margin-bottom:18px">
+          <thead><tr><th>Assignment</th><th>Topic</th><th>Set by</th><th>Deadline</th><th>Score</th><th>Status</th></tr></thead>
+          <tbody>${rows.map(g=>{
+            const nQ=g.questions.length;
+            const correctCount=g.questions.filter(q=>q.is_correct===true).length;
+            const deadline=g.questions[0]?.deadline;
+            const deadlineStr=deadline?new Date(deadline).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+            const isOverdue=deadline&&new Date(deadline)<new Date()&&g.status==='pending';
+            const safeTitle=g.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+            const score=g.status==='pending'?`${nQ} question${nQ>1?'s':''}`:`${correctCount}/${nQ}`;
+            return `<tr ${isOverdue?'style="background:#fff8f8"':''}>
+              <td><strong>${g.title}</strong>${isOverdue?' <span class="badge b-red" style="font-size:10px">Overdue</span>':''}</td>
+              <td>${g.topic}</td>
+              <td>${g.teacher}</td>
+              <td style="${isOverdue?'color:var(--err);font-weight:600':'color:#7a8a9a'}">${deadlineStr}</td>
+              <td>${score}</td>
+              <td>${g.status==='pending'
+                ? `<button class="btn-action" style="padding:5px 14px;font-size:12px" onclick="openAssignmentModal('${safeTitle}')">Start</button>`
+                : '<span class="badge b-done">Submitted</span>'}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>`;
+    };
+
+    if(pending.length) html+=makeTable(pending,`Pending — ${pending.length}`);
+    if(done.length) html+=makeTable(done,`Completed — ${done.length}`);
+    el.innerHTML=html;
+  }catch(e){el.innerHTML='<div class="empty"><div class="empty-icon">—</div><div class="empty-text">Failed to load.</div></div>';}
+}
+
+function assignmentGroupCard(g){
+  const nQ=g.questions.length;
+  const doneCount=g.questions.filter(q=>q.status==='completed').length;
+  const correctCount=g.questions.filter(q=>q.is_correct===true).length;
+  const isPending=g.status==='pending';
+  const scoreStr=isPending?(doneCount>0?`${doneCount}/${nQ} answered`:`${nQ} question${nQ>1?'s':''}`):`${correctCount}/${nQ} correct`;
+  const dateStr=new Date(g.assigned_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  const deadline=g.questions[0]?.deadline;
+  const deadlineStr=deadline?`<span style="color:var(--err);font-weight:600">Due: ${new Date(deadline).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span>`:'';
+  const isOverdue=deadline&&new Date(deadline)<new Date()&&isPending;
+  const safeTitle=g.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  return `<div class="asgn-card" ${isOverdue?'style="border-left:3px solid var(--err)"':''}>
+    <div class="asgn-left">
+      <div class="asgn-title">${g.title} <span class="badge ${isPending?'b-pending':'b-done'}">${isPending?'Pending':'Completed'}</span>${isOverdue?' <span class="badge b-red">Overdue</span>':''}</div>
+      <div class="asgn-meta">
+        <span>${g.topic}</span>
+        <span>Set by ${g.teacher}</span>
+        <span>${dateStr}</span>
+        <span>${scoreStr}</span>
+        ${deadlineStr?`<span>${deadlineStr}</span>`:''}
+      </div>
+    </div>
+    ${isPending?`<button class="btn-action" onclick="openAssignmentModal('${safeTitle}')">Start</button>`:`<span style="font-size:12px;color:var(--muted)">Submitted</span>`}
+  </div>`;
+}
+
+// ── ATTEMPT MODAL ─────────────────────────────────────────────────────────
+async function openAssignmentModal(baseTitle){
+  const res=await fetch(`${API}/assignments/student/${currentUser.id}`);
+  const all=await res.json();
+  const questions=all.filter(a=>a.title.replace(/ \(Q\d+\/\d+\)$/,'')=== baseTitle && a.status==='pending');
+  if(!questions.length) return;
+  modalAssignments=questions;
+  document.getElementById('modal-title-text').textContent=baseTitle;
+  document.getElementById('modal-from').textContent=`Assigned by ${questions[0].teacher_name} — ${questions.length} question${questions.length>1?'s':''}`;
+  document.getElementById('modal-progress').textContent='';
+  // Build question blocks
+  const list=document.getElementById('modal-q-list');
+  list.innerHTML=questions.map((q,i)=>`
+    <div class="q-block" id="qblock-${i}">
+      <div class="q-num">Question ${i+1} of ${questions.length} — ${q.topic}</div>
+      <div class="q-text">${q.question}</div>
+      <textarea class="q-textarea" id="qanswer-${i}" rows="2" placeholder="Your answer..."></textarea>
+      <div class="q-feedback" id="qfeedback-${i}" style="display:none"></div>
+    </div>`).join('');
+  document.getElementById('modal-submit-btn').style.display='inline-block';
+  document.getElementById('modal-submit-btn').textContent='Submit All Answers';
+  document.getElementById('modal-submit-btn').disabled=false;
+  document.getElementById('modal-done-btn').style.display='none';
+  document.getElementById('attempt-modal').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('attempt-modal').classList.remove('open');
+  loadAssignments();
+}
+
+async function submitAllAnswers(){
+  // Validate all answered
+  const unanswered=modalAssignments.findIndex((_,i)=>!document.getElementById('qanswer-'+i).value.trim());
+  if(unanswered!==-1){
+    document.getElementById('modal-progress').textContent=`Please answer question ${unanswered+1} before submitting.`;
+    document.getElementById('modal-progress').style.color='var(--err)';
+    return;
+  }
+  const btn=document.getElementById('modal-submit-btn');
+  btn.innerHTML='<span class="spinner"></span> Submitting...';btn.disabled=true;
+  let allSubmitted=true;
+  for(let i=0;i<modalAssignments.length;i++){
+    const a=modalAssignments[i];
+    const answer=document.getElementById('qanswer-'+i).value.trim();
+    try{
+      const res=await fetch(`${API}/assignments/${a.id}/complete`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_answer:answer,time_taken:0})});
+      const data=await res.json();
+      // Show feedback per question
+      const fbEl=document.getElementById('qfeedback-'+i);
+      fbEl.className='q-feedback '+(data.correct?'correct':'incorrect');
+      fbEl.innerHTML=`<strong>${data.correct?'Correct':'Incorrect'}</strong><br/>${data.ai_feedback}${!data.correct?`<div class="q-correct-ans">Correct answer: ${a.correct_answer}</div>`:''}`;
+      fbEl.style.display='block';
+      // Disable textarea
+      document.getElementById('qanswer-'+i).disabled=true;
+    }catch(e){allSubmitted=false;}
+  }
+  if(allSubmitted){
+    document.getElementById('modal-progress').textContent='All answers submitted.';
+    document.getElementById('modal-progress').style.color='var(--ok)';
+    btn.style.display='none';
+    document.getElementById('modal-done-btn').style.display='block';
+  } else {
+    btn.innerHTML='Submit All Answers';btn.disabled=false;
+    document.getElementById('modal-progress').textContent='Some submissions failed. Please try again.';
+    document.getElementById('modal-progress').style.color='var(--err)';
+  }
+}
+
+// ── SELF PRACTICE ─────────────────────────────────────────────────────────
+async function loadPracticeHistory(){
+  if(!currentUser?.id) return;
+  try{
+    const res=await fetch(`${API}/practice-results/${currentUser.id}`);
+    if(res.ok){
+      const data=await res.json();
+      PS.history=data.map(r=>({topic:r.topic,diff:r.difficulty,total:r.total_questions,answered:r.total_questions,correct:r.correct_count,score:Math.round(r.score_pct),date:new Date(r.taken_at).toLocaleDateString()}));
+      renderPracticeHistory();
+    }
+  }catch(e){}
+}
+
+async function startPracticeSession(){
+  const topic=document.getElementById('quiz-topic').value.trim();
+  const diff=document.getElementById('quiz-diff').value;
+  const num=parseInt(document.getElementById('quiz-num').value)||5;
+  if(!topic){showMsg('quiz-msg','Please enter a topic.','err');return;}
+  const msgEl=document.getElementById('quiz-msg');
+  msgEl.className='msg';msgEl.textContent='';
+  const btn=document.getElementById('btn-start-session');
+  btn.innerHTML='<span class="spinner spinner-dk"></span> Generating...';btn.disabled=true;
+  PS={active:true,topic,diff,total:num,current:0,correct:0,skipped:0,questions:[],history:PS.history};
+  updatePracticeStats();
+  try{
+    await loadNextQuestion();
+    document.getElementById('practice-quiz-area').style.display='block';
+  }catch(e){
+    console.error('Practice error:',e);
+    showMsg('quiz-msg','Could not generate question. Check the API is running.','err');
+    PS.active=false;
+    document.getElementById('practice-quiz-area').style.display='none';
+  }finally{btn.innerHTML='Start Session';btn.disabled=false;}
+}
+
+async function loadNextQuestion(){
+  if(PS.current>=PS.total){endPracticeSession();return;}
+  document.getElementById('q-counter').textContent=`Question ${PS.current+1} of ${PS.total}`;
+  document.getElementById('q-topic-tag').textContent=PS.topic.toUpperCase();
+  document.getElementById('q-question').textContent='Loading question...';
+  document.getElementById('q-answer').value='';
+  document.getElementById('feedback-box').style.display='none';
+  const submitBtn=document.getElementById('btn-submit-answer');
+  submitBtn.disabled=false;
+  submitBtn.textContent='Submit';
+  submitBtn.onclick=submitPracticeAnswer;
+  document.getElementById('btn-skip').style.display='inline-block';
+  clearInterval(timerInterval);timerStart=Date.now();
+  timerInterval=setInterval(()=>{document.getElementById('q-timer').textContent=Math.floor((Date.now()-timerStart)/1000)+'s';},1000);
+  // Pass ALL questions asked so far this session as exclusions
+  const alreadyAsked=PS.questions.map(q=>q&&q.question).filter(Boolean);
+  const res=await fetch(`${API}/generate-question`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({topic:PS.topic,difficulty:PS.diff,exclude:alreadyAsked})
+  });
+  if(!res.ok) throw new Error('API returned '+res.status);
+  const q=await res.json();
+  if(!q||!q.question) throw new Error('No question in response');
+  PS.questions[PS.current]=q;
+  document.getElementById('q-question').textContent=q.question;
+}
+
+async function submitPracticeAnswer(){
+  if(!currentUser?.id||!PS.active) return;
+  const answer=document.getElementById('q-answer').value.trim();
+  if(!answer) return;
+  clearInterval(timerInterval);
+  const timeTaken=(Date.now()-timerStart)/1000;
+  const q=PS.questions[PS.current];
+  const btn=document.getElementById('btn-submit-answer');
+  btn.innerHTML='<span class="spinner spinner-dk"></span> Checking...';btn.disabled=true;
+  try{
+    const res=await fetch(`${API}/submit-answer`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:currentUser.id,topic:PS.topic,question:q.question,student_answer:answer,correct_answer:q.correct_answer,time_taken:timeTaken})});
+    const data=await res.json();
+    if(data.correct) PS.correct++;
+    const box=document.getElementById('feedback-box');
+    box.className='feedback '+(data.correct?'correct':'incorrect');
+    document.getElementById('fb-label').textContent=data.correct?'Correct':'Incorrect';
+    document.getElementById('fb-text').textContent=data.ai_feedback;
+    document.getElementById('fb-correct-ans').textContent=data.correct?'':('Correct answer: '+q.correct_answer);
+    box.style.display='block';
+    document.getElementById('btn-skip').style.display='none';
+    btn.textContent='Next';btn.disabled=false;
+    btn.onclick=()=>{PS.current++;btn.onclick=null;updatePracticeStats();loadNextQuestion();};
+  }catch(e){btn.innerHTML='Submit';btn.disabled=false;}
+}
+
+function skipQuestion(){
+  PS.skipped++;PS.current++;clearInterval(timerInterval);updatePracticeStats();loadNextQuestion();
+}
+
+async function endPracticeSession(){
+  if(!PS.active) return;
+  clearInterval(timerInterval);PS.active=false;
+  const answered=PS.current,score=answered?Math.round(PS.correct/answered*100):0;
+  const record={topic:PS.topic,diff:PS.diff,total:PS.total,answered,correct:PS.correct,score,date:new Date().toLocaleDateString()};
+  PS.history.unshift(record);
+  // Save to server
+  if(currentUser?.id&&answered>0){
+    try{await fetch(`${API}/practice-results`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:currentUser.id,topic:PS.topic,difficulty:PS.diff,total_questions:answered,correct_count:PS.correct})});}
+    catch(e){}
+  }
+  document.getElementById('practice-quiz-area').style.display='none';
+  updatePracticeStats();
+}
+
+function updatePracticeStats(){
+  const el=document.getElementById('practice-session-stats');
+  const s=PS;
+  if(!s.active){el.innerHTML='<div class="empty" style="padding:12px"><div class="empty-text" style="font-size:13px">No active session</div></div>';}
+  else{
+    const answered=s.current,score=answered?Math.round(s.correct/answered*100):0;
+    const col=score>=70?'var(--ok)':score>=40?'#e67e22':'var(--err)';
+    el.innerHTML=`
+      <div class="pp-row"><span>Topic</span><strong>${s.topic}</strong></div>
+      <div class="pp-row"><span>Progress</span><strong>${answered} / ${s.total}</strong></div>
+      <div class="pp-row"><span>Correct</span><strong style="color:var(--ok)">${s.correct}</strong></div>
+      <div class="pp-row"><span>Skipped</span><strong>${s.skipped}</strong></div>
+      <div class="pp-total"><span>Score</span><span style="color:${col}">${score}%</span></div>`;
+  }
+  renderPracticeHistory();
+}
+
+function renderPracticeHistory(){
+  const histEl=document.getElementById('practice-history');
+  const section=document.getElementById('practice-history-section');
+  if(!PS.history.length){section.style.display='none';return;}
+  section.style.display='block';
+  histEl.innerHTML=PS.history.slice(0,8).map(h=>{
+    const col=h.score>=70?'var(--ok)':h.score>=40?'#e67e22':'var(--err)';
+    return `<div class="past-session-row">
+      <span>${h.topic} · ${h.diff} · ${h.date}</span>
+      <strong style="color:${col}">${h.correct}/${h.answered} (${h.score}%)</strong>
+    </div>`;}).join('');
+}
+
+// ── MY PROGRESS ───────────────────────────────────────────────────────────
+async function loadProgress(){
+  if(!currentUser?.id) return;
+  const insEl=document.getElementById('progress-insights');
+  insEl.innerHTML='<div class="card"><div class="loading">Loading...</div></div>';
+  try{
+    const res=await fetch(`${API}/progress/${currentUser.id}`);
+    if(res.status===404||!res.ok){
+      insEl.innerHTML='<div class="card" style="grid-column:1/-1"><div class="empty"><div class="empty-text">No completed assignments yet.</div></div></div>';
+      document.getElementById('assignment-history').innerHTML='';
+      return;
+    }
+    const data=await res.json();
+    const topics=data.topics||[];
+    const assignments=data.assignments||[];
+    if(!topics.length){
+      insEl.innerHTML='<div class="card" style="grid-column:1/-1"><div class="empty"><div class="empty-text">No completed assignments yet.</div></div></div>';
+      return;
+    }
+
+    // Best topic = highest avg_score
+    const best=[...topics].sort((a,b)=>Number(b.avg_score)-Number(a.avg_score))[0];
+    // Needs work = lowest avg_score
+    const worst=[...topics].sort((a,b)=>Number(a.avg_score)-Number(b.avg_score))[0];
+    // Most improved = topic where latest assignment score > earliest assignment score
+    // Group assignments by topic, compare first vs last
+    const byTopic={};
+    assignments.forEach(a=>{
+      if(!byTopic[a.topic]) byTopic[a.topic]=[];
+      byTopic[a.topic].push(a);
+    });
+    let improved=null, bestGain=-Infinity;
+    Object.entries(byTopic).forEach(([topic,list])=>{
+      if(list.length<2) return;
+      const sorted=[...list].sort((a,b)=>new Date(a.submitted_at)-new Date(b.submitted_at));
+      const first=Number(sorted[0].pct), last=Number(sorted[sorted.length-1].pct);
+      const gain=last-first;
+      if(Math.abs(gain)>Math.abs(bestGain)){bestGain=gain;improved={topic,from:Math.round(first),to:Math.round(last),gain:Math.round(gain)};}
+    });
+
+    const bestPct=Math.round(Number(best.avg_score)*100);
+    const worstPct=Math.round(Number(worst.avg_score)*100);
+
+    insEl.innerHTML=`
+      <div class="card">
+        <div class="card-label" style="color:#27ae60">🏆 Best Topic</div>
+        <div style="font-size:20px;font-weight:700;color:var(--navy);margin:8px 0 4px">${best.topic}</div>
+        <div style="font-size:13px;color:#7a8a9a">${best.correct_count} / ${best.total_attempts} correct</div>
+        <div style="margin-top:10px"><div class="sbar"><div class="sbar-fill" style="width:${bestPct}%"></div></div></div>
+        <div style="font-size:18px;font-weight:700;color:#27ae60;margin-top:6px">${bestPct}%</div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="color:var(--err)">📌 Needs Work</div>
+        <div style="font-size:20px;font-weight:700;color:var(--navy);margin:8px 0 4px">${worst.topic}</div>
+        <div style="font-size:13px;color:#7a8a9a">${worst.correct_count} / ${worst.total_attempts} correct</div>
+        <div style="margin-top:10px"><div class="sbar"><div class="sbar-fill low" style="width:${worstPct}%"></div></div></div>
+        <div style="font-size:18px;font-weight:700;color:var(--err);margin-top:6px">${worstPct}%</div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="color:#e67e22">📈 Most Improved</div>
+        ${improved
+          ? `<div style="font-size:20px;font-weight:700;color:var(--navy);margin:8px 0 4px">${improved.topic}</div>
+             <div style="font-size:13px;color:#7a8a9a">From ${improved.from}% → ${improved.to}%</div>
+             <div style="font-size:18px;font-weight:700;color:${improved.gain>=0?'#e67e22':'var(--err)'};margin-top:10px">${improved.gain>=0?'+':''}${improved.gain}% ${improved.gain>=0?'gain':'drop'}</div>`
+          : `<div style="font-size:13px;color:#a0aab4;margin-top:12px">Complete more assignments on the same topic to see improvement.</div>`
+        }
+      </div>`;
+
+    // Populate topic filter
+    const tf=document.getElementById('filter-topic');
+    tf.innerHTML='<option value="">All Topics</option>'+topics.map(t=>`<option value="${t.topic}">${t.topic}</option>`).join('');
+    loadAssignmentHistory(assignments);
+  }catch(e){
+    insEl.innerHTML='<div class="card" style="grid-column:1/-1"><div class="empty"><div class="empty-text">Failed to load.</div></div></div>';
+  }
+}
+
+async function loadAssignmentHistory(cachedAssignments){
+  if(!currentUser?.id) return;
+  const el=document.getElementById('assignment-history');
+  el.innerHTML='<div class="loading">Loading...</div>';
+  const tf=document.getElementById('filter-topic').value;
+  const pf=parseInt(document.getElementById('filter-period').value)||0;
+  try{
+    let assignments=cachedAssignments;
+    if(!assignments){
+      const res=await fetch(`${API}/progress/${currentUser.id}`);
+      const data=await res.json();
+      assignments=data.assignments||[];
+    }
+    if(tf) assignments=assignments.filter(a=>a.topic===tf);
+    if(pf){const cut=new Date(Date.now()-pf*864e5);assignments=assignments.filter(a=>new Date(a.submitted_at)>=cut);}
+    if(!assignments.length){el.innerHTML='<div class="empty" style="padding:20px"><div class="empty-text">No assignments match this filter.</div></div>';return;}
+    el.innerHTML=`<table class="data-table">
+      <thead><tr><th>Assignment</th><th>Topic</th><th>Set by</th><th>Score</th><th>%</th><th>Avg Time</th><th>Submitted</th></tr></thead>
+      <tbody>${assignments.map(a=>{
+        const p=Math.round(Number(a.pct)*100);
+        const c=p>=70?'b-done':p>=40?'b-gold':'b-red';
+        return `<tr>
+          <td><strong>${a.base_title}</strong></td>
+          <td>${a.topic}</td>
+          <td>${a.teacher_name}</td>
+          <td><strong>${a.correct_q} / ${a.total_q}</strong></td>
+          <td><span class="badge ${c}">${p}%</span></td>
+          <td>${a.avg_time ? a.avg_time+'s' : '—'}</td>
+          <td>${a.submitted_at ? new Date(a.submitted_at).toLocaleDateString() : '—'}</td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }catch(e){el.innerHTML='<div class="empty"><div class="empty-text">Failed.</div></div>';}
+}
+
+
+
+// ── CLASS FILTERS ─────────────────────────────────────────────────────────
+async function loadClassFilters(){
+  try{
+    const res=await fetch(`${API}/classes`);const classes=await res.json();
+    ['analytics-pills','qfilter-pills'].forEach(id=>{
+      const el=document.getElementById(id);if(!el)return;
+      el.innerHTML=`<span class="pill active" onclick="setClassFilter('',this,'${id}')">All Classes</span>`+
+        classes.map(c=>`<span class="pill" onclick="setClassFilter('${c}',this,'${id}')">${c}</span>`).join('');
+    });
+    const af=document.getElementById('assign-class-filter');
+    if(af) af.innerHTML='<option value="">— Select a class —</option>'+classes.map(c=>`<option value="${c}">${c}</option>`).join('');
+  }catch(e){}
+}
+
+function setClassFilter(cls,el,pillsId){
+  activeClassFilter=cls;
+  document.querySelectorAll('#'+pillsId+' .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  if(pillsId==='analytics-pills'){loadTeacherAssignments();loadHardest();loadImproved();}
+  else loadQuizzes();
+}
+
+// ── TEACHER: ASSIGN ───────────────────────────────────────────────────────
+async function loadStudentsList(){
+  if(currentUser?.role!=='teacher') return;
+  try{
+    const res=await fetch(`${API}/students`);allStudents=await res.json();
+    const classes=[...new Set(allStudents.map(s=>s.class_name).filter(Boolean))].sort();
+    const af=document.getElementById('assign-class-filter');
+    if(af) af.innerHTML='<option value="">— Select a class —</option>'+classes.map(c=>`<option value="${c}">${c}</option>`).join('');
+    // Hide student panel until class is chosen
+    document.getElementById('students-fg').style.display='none';
+    document.getElementById('assign-students-list').innerHTML='';
+  }catch(e){}
+}
+
+function filterStudentsByClass(){
+  const cls=document.getElementById('assign-class-filter').value;
+  const fg=document.getElementById('students-fg');
+  if(!cls){fg.style.display='none';return;}
+  fg.style.display='block';
+  renderStudentCheckboxes(allStudents.filter(s=>s.class_name===cls));
+}
+
+function renderStudentCheckboxes(students){
+  const c=document.getElementById('assign-students-list');
+  if(!students.length){c.innerHTML='<div style="color:#a0aab4;font-size:13px;padding:12px">No students found</div>';return;}
+  c.innerHTML=`<div class="chk-all-row">
+    <input type="checkbox" id="chk-all" onclick="toggleSelectAll(this)"/>
+    <span style="font-size:13px;font-weight:600;color:var(--navy)">Select All (${students.length})</span>
+  </div>`+
+    students.map(s=>`<label class="chk-item"><input type="checkbox" class="student-chk" value="${s.id}" onchange="syncSelectAll()"/><span style="font-size:13px;color:var(--navy);font-weight:500;flex:1">${s.name}</span><span style="font-size:11px;color:#a0aab4">${s.class_name}</span></label>`).join('');
+}
+
+function toggleSelectAll(masterCb){
+  document.querySelectorAll('.student-chk').forEach(cb=>cb.checked=masterCb.checked);
+}
+function syncSelectAll(){
+  const all=document.querySelectorAll('.student-chk');
+  const checked=document.querySelectorAll('.student-chk:checked');
+  const m=document.getElementById('chk-all');
+  if(m) m.checked=all.length>0&&all.length===checked.length;
+}
+
+function setQMode(mode){
+  qMode=mode;
+  document.getElementById('mode-ai').classList.toggle('active',mode==='ai');
+  document.getElementById('mode-manual').classList.toggle('active',mode==='manual');
+  document.getElementById('manual-fields').style.display=mode==='manual'?'block':'none';
+  document.getElementById('assign-num-q').disabled=mode==='manual';
+  if(mode==='manual') initManualFields();
+}
+
+function initManualFields(){document.getElementById('manual-questions-list').innerHTML='';addManualQuestion();}
+function addManualQuestion(){
+  const list=document.getElementById('manual-questions-list'),idx=list.children.length+1;
+  const div=document.createElement('div');div.style.cssText='border:1px solid #e0e7ef;border-radius:6px;padding:13px;margin-bottom:9px;background:#fff;';
+  div.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:9px">Question ${idx}</div>
+    <div class="fg" style="margin-bottom:9px"><label class="lbl">Question Text</label><textarea class="answer-area manual-q-text" rows="2" placeholder="Type the question..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg" style="margin:0"><label class="lbl">Correct Answer</label><input class="inp manual-q-ans" type="text" placeholder="The correct answer"/></div>
+    </div>`;
+  list.appendChild(div);
+}
+
+async function createAssignment(){
+  const ids=Array.from(document.querySelectorAll('.student-chk:checked')).map(cb=>parseInt(cb.value));
+  const title=document.getElementById('assign-title').value.trim();
+  const topic=document.getElementById('assign-topic').value.trim();
+  const difficulty=document.getElementById('assign-diff').value;
+  const className=document.getElementById('assign-class-filter').value||'General';
+  const deadline=document.getElementById('assign-deadline').value||null;
+  if(!ids.length) return showMsg('assign-msg','Please select at least one student.','err');
+  if(!title) return showMsg('assign-msg','Please enter an assignment title.','err');
+  if(!topic) return showMsg('assign-msg','Please enter a topic.','err');
+  const btn=document.getElementById('btn-assign');btn.disabled=true;
+  if(qMode==='manual'){
+    const qTexts=document.querySelectorAll('.manual-q-text'),qAnss=document.querySelectorAll('.manual-q-ans');
+    const manualQs=[];
+    for(let i=0;i<qTexts.length;i++){
+      const q=qTexts[i].value.trim(),a=qAnss[i].value.trim();
+      if(!q||!a){showMsg('assign-msg',`Fill in question ${i+1} and its answer.`,'err');btn.disabled=false;return;}
+      manualQs.push({question:q,correct_answer:a,hint:''});
+    }
+    btn.innerHTML=`<span class="spinner spinner-dk"></span> Assigning...`;
+    try{
+      const res=await fetch(`${API}/assignments/manual`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({teacher_id:currentUser.id,student_ids:ids,title,topic,difficulty,class_name:className,questions:manualQs,deadline})});
+      const data=await res.json();
+      if(!res.ok) return showMsg('assign-msg',data.detail||'Failed.','err');
+      showMsg('assign-msg',`"${title}" — ${data.total_questions} question${data.total_questions>1?'s':''} assigned to ${data.assigned} student${data.assigned>1?'s':''}.`,'ok');
+      document.getElementById('assign-title').value='';document.getElementById('assign-topic').value='';document.getElementById('assign-deadline').value='';
+      document.querySelectorAll('.student-chk').forEach(cb=>cb.checked=false);initManualFields();
+    }catch(e){showMsg('assign-msg','Failed.','err');}
+    finally{btn.innerHTML='Assign to Selected Students';btn.disabled=false;}
+  } else {
+    const numQ=parseInt(document.getElementById('assign-num-q').value)||1;
+    btn.innerHTML=`<span class="spinner spinner-dk"></span> Generating ${numQ}q for ${ids.length} student${ids.length>1?'s':''}...`;
+    try{
+      const res=await fetch(`${API}/assignments`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({teacher_id:currentUser.id,student_ids:ids,title,topic,difficulty,num_questions:numQ,class_name:className,deadline})});
+      const data=await res.json();
+      if(!res.ok) return showMsg('assign-msg',data.detail||'Failed.','err');
+      showMsg('assign-msg',`"${title}" — ${data.total_questions} question${data.total_questions>1?'s':''} assigned to ${data.assigned} student${data.assigned>1?'s':''}.`,'ok');
+      document.getElementById('assign-title').value='';document.getElementById('assign-topic').value='';document.getElementById('assign-num-q').value='1';document.getElementById('assign-deadline').value='';
+      document.querySelectorAll('.student-chk').forEach(cb=>cb.checked=false);const m=document.getElementById('chk-all');if(m)m.checked=false;
+    }catch(e){showMsg('assign-msg','Failed.','err');}
+    finally{btn.innerHTML='Assign to Selected Students';btn.disabled=false;}
+  }
+}
+
+// ── TEACHER: QUIZZES (by assignment title + date) ─────────────────────────
+async function loadQuizzes(){
+  if(!currentUser?.id) return;
+  const el=document.getElementById('quizzes-content');el.innerHTML='<div class="loading">Loading...</div>';
+  try{
+    const cp=activeClassFilter?`?class_name=${encodeURIComponent(activeClassFilter)}`:'';
+    const res=await fetch(`${API}/assignments/teacher/${currentUser.id}${cp}`);
+    const data=await res.json();
+    if(!data.length){el.innerHTML='<div class="empty"><div class="empty-text">No quizzes set yet.</div></div>';return;}
+    // Group by base assignment title
+    const grouped={};
+    data.forEach(a=>{
+      const base=a.title.replace(/ \(Q\d+\/\d+\)$/,'');
+      if(!grouped[base]) grouped[base]={title:base,topic:a.topic,difficulty:a.difficulty,class_name:a.class_name,assigned_at:a.assigned_at,deadline:a.deadline,questions:{}};
+      const qKey=a.question;
+      if(!grouped[base].questions[qKey]) grouped[base].questions[qKey]={question:a.question,correct_answer:a.correct_answer,id:a.id,students:[]};
+      grouped[base].questions[qKey].students.push({id:a.id,name:a.student_name,status:a.status});
+    });
+    el.innerHTML=Object.values(grouped).sort((a,b)=>new Date(b.assigned_at)-new Date(a.assigned_at)).map(g=>{
+      const title=g.title;
+      const dateStr=new Date(g.assigned_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      const deadlineStr=g.deadline?(' · <span style="color:var(--err);font-weight:600">Due: '+new Date(g.deadline).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'</span>'):'';
+      const questions=Object.values(g.questions);
+      const allStudents=[...new Set(questions.flatMap(q=>q.students.map(s=>s.name)))];
+      const submittedStudents=[...new Set(questions.flatMap(q=>q.students.filter(s=>s.status==='completed').map(s=>s.name)))];
+      const gId='tg_'+Math.random().toString(36).slice(2);
+      return `<div class="topic-group" style="margin-bottom:12px">
+        <div class="tg-header" onclick="document.getElementById('${gId}').classList.toggle('open')">
+          <div style="flex:1;min-width:0">
+            <span class="tg-title">${title}</span>
+            <span class="tg-meta" style="display:block;margin-top:2px">${g.topic} &middot; ${g.difficulty} &middot; ${questions.length} question${questions.length>1?'s':''} &middot; Assigned ${dateStr}${deadlineStr}</span>
+          </div>
+          <button onclick="event.stopPropagation();deleteAssignmentBulk('${title.replace(/'/g,"\\'")}',${currentUser.id})" style="margin-left:12px;padding:4px 11px;background:var(--err);color:#fff;border:none;border-radius:4px;font-size:12px;cursor:pointer;flex-shrink:0">Delete</button>
+        </div>
+        <div class="tg-body" id="${gId}">
+          <div style="padding:12px 16px;border-bottom:1px solid #e8edf2;background:#f7f9fc;font-size:12px">
+            <div style="display:flex;gap:16px;margin-bottom:8px">
+              <span><strong>${allStudents.length}</strong> assigned</span>
+              <span style="color:var(--ok)"><strong>${submittedStudents.length}</strong> submitted</span>
+              <span style="color:#e67e22"><strong>${allStudents.length-submittedStudents.length}</strong> pending</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              ${allStudents.map(name=>{
+                const done=submittedStudents.includes(name);
+                return `<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:${done?'#e8f8f0':'#fff8f0'};color:${done?'#27ae60':'#e67e22'};border:1px solid ${done?'#b8e6cc':'#fad4a0'}">${name} ${done?'✓':'⏳'}</span>`;
+              }).join('')}
+            </div>
+          </div>
+          ${questions.map((q,qi)=>`
+            <div style="border-bottom:${qi<questions.length-1?'1px solid #e8edf2':'none'};padding:14px 16px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px">
+                <div>
+                  <div style="font-size:10px;font-weight:700;color:#8a9ab0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Question ${qi+1}</div>
+                  <div style="font-size:14px;color:var(--navy);line-height:1.5">${q.question}</div>
+                </div>
+                <div>
+                  <div style="font-size:10px;font-weight:700;color:#27ae60;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Correct Answer</div>
+                  <div style="font-size:14px;color:#27ae60;font-weight:500">${q.correct_answer}</div>
+                </div>
+              </div>
+              <div style="font-size:12px;color:#7a8a9a">
+                ${q.students.filter(s=>s.status==='pending').length>0?`<span style="color:#e67e22">Pending: ${q.students.filter(s=>s.status==='pending').map(s=>s.name).join(', ')}</span>`:'<span style="color:var(--ok)">All students submitted</span>'}
+                &nbsp;&nbsp;
+                <button class="btn-sm btn-sm-navy" onclick="openEditModal(${q.id},\`${title.replace(/`/g,"'")}\`,\`${q.question.replace(/`/g,"'")}\`,\`${q.correct_answer.replace(/`/g,"'")}\`)">Edit</button>
+                <button class="btn-sm btn-sm-red" onclick="deleteAssignment(${q.id})">Delete</button>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div class="empty"><div class="empty-text">Failed to load.</div></div>';}
+}
+
+// ── TEACHER: ANALYTICS ────────────────────────────────────────────────────
+// ── TEACHER: ANALYTICS ────────────────────────────────────────────────────
+async function loadTeacherAssignments(){
+  if(!currentUser?.id||currentUser.role!=='teacher') return;
+  const el=document.getElementById('teacher-assignments-content');el.innerHTML='<div class="loading">Loading...</div>';
+  try{
+    const cp=activeClassFilter?`&class_name=${encodeURIComponent(activeClassFilter)}`:'';
+    const res=await fetch(`${API}/analytics/by-assignment?teacher_id=${currentUser.id}${cp}`);
+    const assignments=await res.json();
+    if(!assignments.length){el.innerHTML='<div class="empty" style="padding:20px"><div class="empty-text">No submitted assignments yet.</div></div>';return;}
+    let html='';
+    const sorted=[...assignments].sort((a,b)=>new Date(b.assigned_at)-new Date(a.assigned_at));
+    sorted.forEach(asgn=>{
+      const gId='tg_ana_'+Math.random().toString(36).slice(2);
+      const dateStr=asgn.assigned_at?new Date(asgn.assigned_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+      const avgPct=asgn.students_summary.length?Math.round(asgn.students_summary.reduce((s,x)=>s+x.pct,0)/asgn.students_summary.length):0;
+      // Build per-student answer map: student_id → {name, class, score, answers}
+      const studentAnswers={};
+      asgn.questions.forEach((q,qi)=>{
+        q.students.forEach(s=>{
+          if(!studentAnswers[s.student_id]){
+            const summary=asgn.students_summary.find(x=>x.student_id===s.student_id)||{correct:0,total:asgn.questions.length,pct:0};
+            studentAnswers[s.student_id]={name:s.name,class_name:s.class_name,correct:summary.correct,total:summary.total,pct:summary.pct,answers:[]};
+          }
+          studentAnswers[s.student_id].answers[qi]={question:q.question,correct_answer:q.correct_answer,student_answer:s.student_answer,is_correct:s.is_correct,time_taken:s.time_taken};
+        });
+      });
+
+      // Students ranked highest → lowest score, built from studentAnswers so names are guaranteed
+      const rankedStudents=Object.values(studentAnswers).sort((a,b)=>b.pct-a.pct);
+
+      html+=`<div class="topic-group" style="margin-bottom:14px">
+        <div class="tg-header" onclick="document.getElementById('${gId}').classList.toggle('open');this.querySelector('.exp-icon').classList.toggle('open')">
+          <div style="flex:1;min-width:0">
+            <span class="tg-title">${asgn.title}</span>
+            <span class="tg-meta" style="display:block;margin-top:2px">${asgn.topic} &middot; ${asgn.questions.length} question${asgn.questions.length>1?'s':''} &middot; ${dateStr} &middot; Class avg: <strong>${avgPct}%</strong></span>
+          </div>
+          <span class="exp-icon" style="font-size:11px;color:#a0aab4;margin-left:10px;transition:transform 0.2s">▶</span>
+        </div>
+        <div class="tg-body" id="${gId}">`;
+
+      // One collapsible row per student, sorted high→low
+      rankedStudents.forEach((s,rank)=>{
+        const sId='s_'+gId+'_'+rank;
+        const badgeClass=s.pct>=70?'b-done':s.pct>=40?'b-gold':'b-red';
+        html+=`
+          <div style="border-bottom:1px solid #eef0f4">
+            <div onclick="const b=document.getElementById('${sId}');b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.sarrow').textContent=b.style.display==='none'?'▶':'▼'"
+              style="display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;background:#fff;user-select:none">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${rank+1}</div>
+              <div style="flex:1">
+                <strong style="font-size:13px;color:var(--navy)">${s.name}</strong>
+                <span style="font-size:11px;color:#a0aab4;margin-left:8px">${s.class_name}</span>
+              </div>
+              <span class="badge ${badgeClass}" style="font-size:12px">${s.correct}/${s.total} &nbsp; ${s.pct}%</span>
+              <span class="sarrow" style="font-size:10px;color:#a0aab4;margin-left:8px;width:10px">▶</span>
+            </div>
+            <div id="${sId}" style="display:none;background:#f9fafb;padding:0 16px 12px">
+              ${s.answers.map((a,qi)=>a?`
+                <div style="padding:10px 0;${qi<s.answers.length-1?'border-bottom:1px solid #eef0f4':''}">
+                  <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start">
+                    <div>
+                      <div style="font-size:10px;font-weight:700;color:#8a9ab0;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Q${qi+1}</div>
+                      <div style="font-size:13px;color:var(--navy);line-height:1.5;margin-bottom:4px">${a.question}</div>
+                      <div style="font-size:12px;color:#2c3e50"><span style="color:#8a9ab0">Answer:</span> ${a.student_answer||'—'}</div>
+                      <div style="font-size:12px;color:#27ae60;margin-top:2px"><span style="color:#8a9ab0">Correct:</span> ${a.correct_answer}</div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0">
+                      ${a.is_correct?'<span class="badge b-done">✓ Correct</span>':'<span class="badge b-red">✗ Wrong</span>'}
+                      ${a.time_taken?`<div style="font-size:11px;color:#a0aab4;margin-top:4px">${a.time_taken}s</div>`:''}
+                    </div>
+                  </div>
+                </div>`:'').join('')}
+            </div>
+          </div>`;
+      });
+
+      html+='</div></div>';
+    });
+    el.innerHTML=html;
+  }catch(e){el.innerHTML='<div class="empty"><div class="empty-text">Failed.</div></div>';}
+}
+
+async function loadStruggling(){
+  const threshold=parseFloat(document.getElementById('threshold-input').value)||0.6;
+  const el=document.getElementById('struggling-content');el.innerHTML='<div class="loading">Loading...</div>';
+  try{
+    const cp=activeClassFilter?`&class_name=${encodeURIComponent(activeClassFilter)}`:'';
+    const res=await fetch(`${API}/analytics/struggling?teacher_id=${currentUser.id}&threshold=${threshold}${cp}`);
+    const data=await res.json();const students=data.students||[];
+    if(!students.length){el.innerHTML='<div class="empty" style="padding:14px"><div class="empty-text">No struggling students found below this threshold.</div></div>';return;}
+    let html=`<table class="data-table" style="font-size:12px">
+      <thead><tr><th>Student</th><th>Struggling Topic</th><th>Score</th></tr></thead><tbody>`;
+    students.forEach(s=>{
+      s.topics.forEach((t,i)=>{
+        html+=`<tr>
+          ${i===0?`<td rowspan="${s.topics.length}" style="vertical-align:top;font-weight:600">${s.name}</td>`:''}
+          <td><span class="badge b-red" style="font-weight:600">${t.topic}</span></td>
+          <td>${t.correct}/${t.total} <span style="color:var(--err)">(${t.pct}%)</span></td>
+        </tr>`;
+      });
+    });
+    html+='</tbody></table>';
+    el.innerHTML=html;
+  }catch(e){el.innerHTML='<div class="empty"><div class="empty-text">Failed.</div></div>';}
+}
+
+async function loadHardest(){
+  const el=document.getElementById('hardest-content');
+  try{
+    const cp=activeClassFilter?`&class_name=${encodeURIComponent(activeClassFilter)}`:'';
+    const res=await fetch(`${API}/analytics/hardest-topic?teacher_id=${currentUser.id}${cp}`);
+    const data=await res.json();
+    if(data.message||!Array.isArray(data)||!data.length){el.innerHTML='<div class="empty" style="padding:12px"><div class="empty-text">No submitted assignments yet.</div></div>';return;}
+    el.innerHTML=`<table class="data-table" style="font-size:12px">
+      <thead><tr><th>Topic</th><th>Class Avg Score</th></tr></thead>
+      <tbody>${data.map((t,i)=>{
+        const pct=Math.round(Number(t.avg_score)*100);
+        return `<tr>
+          <td><strong>${t.topic}</strong>${i===0?' <span class="badge b-red" style="font-size:10px">Hardest</span>':''}</td>
+          <td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill ${pct>=70?'':pct>=40?'mid':'low'}" style="width:${pct}%"></div></div><span class="sbar-pct">${pct}%</span></div></td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }catch(e){el.innerHTML='<div class="empty"><div class="empty-text">Failed.</div></div>';}
+}
+
+async function loadImproved(){
+  const el=document.getElementById('improved-content');
+  try{
+    const cp=activeClassFilter?`&class_name=${encodeURIComponent(activeClassFilter)}`:'';
+    const res=await fetch(`${API}/analytics/most-improved?teacher_id=${currentUser.id}${cp}`);
+    const data=await res.json();
+    if(!data.length){el.innerHTML='<div class="empty" style="padding:12px"><div class="empty-text">Not enough data yet — students need multiple assignments per topic.</div></div>';return;}
+    el.innerHTML=`<table class="data-table"><thead><tr><th>Student</th><th>Class</th><th>Topic</th><th>Early</th><th>Recent</th><th>Change</th></tr></thead>
+      <tbody>${data.map(s=>{const imp=Math.round(Number(s.improvement)*100);const isGain=imp>=0;return`<tr>
+        <td><strong>${s.name}</strong></td><td>${s.class_name}</td><td>${s.topic}</td>
+        <td>${Math.round(Number(s.early_avg)*100)}%</td><td>${Math.round(Number(s.recent_avg)*100)}%</td>
+        <td><span class="badge ${isGain?'b-done':'b-red'}">${isGain?'+':''}${imp}%</span></td></tr>`;}).join('')}</tbody></table>`;
+  }catch(e){el.innerHTML='<div class="empty"><div class="empty-text">Failed.</div></div>';}
+}
+
+
+// ── EDIT / DELETE ─────────────────────────────────────────────────────────
+function openEditModal(id,title,question,answer){
+  editingId=id;
+  document.getElementById('edit-title').value=title;
+  document.getElementById('edit-question').value=question;
+  document.getElementById('edit-answer').value=answer;
+  document.getElementById('edit-msg').className='msg';
+  document.getElementById('edit-modal').classList.add('open');
+}
+function closeEditModal(){document.getElementById('edit-modal').classList.remove('open');}
+async function saveAssignmentEdit(){
+  const btn=document.getElementById('edit-save-btn');btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
+  try{
+    const res=await fetch(`${API}/assignments/${editingId}/edit`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('edit-title').value.trim(),question:document.getElementById('edit-question').value.trim(),correct_answer:document.getElementById('edit-answer').value.trim(),hint:''})});
+    if(!res.ok){const d=await res.json();showMsg('edit-msg',d.detail||'Failed.','err');return;}
+    closeEditModal();loadQuizzes();
+  }catch(e){showMsg('edit-msg','Failed.','err');}
+  finally{btn.innerHTML='Save Changes';btn.disabled=false;}
+}
+async function deleteAssignment(id){
+  if(!confirm('Delete this question? This cannot be undone.')) return;
+  try{await fetch(`${API}/assignments/${id}`,{method:'DELETE'});loadQuizzes();}catch(e){alert('Failed.');}
+}
+async function deleteAssignmentBulk(title,teacherId){
+  if(!confirm(`Delete the entire assignment "${title}" for all students? This cannot be undone.`)) return;
+  try{
+    await fetch(`${API}/assignments/bulk?teacher_id=${teacherId}&title=${encodeURIComponent(title)}`,{method:'DELETE'});
+    loadQuizzes();
+  }catch(e){alert('Failed to delete.');}
+}
+</script>
+</body>
+</html>
