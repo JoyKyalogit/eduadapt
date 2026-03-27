@@ -98,7 +98,7 @@ async def get_class_students(class_name: str):
     return [dict(r) for r in rows]
 
 
-# ── TEACHERS ─────────────────────────────────────────────────────────────────
+# ── TEACHERS ─────────────────────────────────────────────────────────────
 @app.post("/teachers")
 async def create_teacher(data: TeacherCreate):
     if not data.password or len(data.password) < 6:

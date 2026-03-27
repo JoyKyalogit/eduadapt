@@ -5,26 +5,23 @@ import re
 from groq import Groq
 from dotenv import load_dotenv
 
-# This handles local development
 load_dotenv()
 
-# This handles the Railway deployment
-api_key = os.environ.get("GROQ_API_KEY")
-
-if not api_key:
-    # This helps us debug in the Railway logs
-    print("WARNING: GROQ_API_KEY not found in environment variables.")
-
-client = Groq(api_key=api_key)
-
-# Your models and logic stay exactly the same below this line
 _MODEL = "llama-3.1-8b-instant"
+_client = None
 
-# ... rest of your code (generate_feedback, generate_question, etc.) ...
+def _get_client():
+    global _client
+    if _client is None:
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            raise RuntimeError("GROQ_API_KEY environment variable is not set.")
+        _client = Groq(api_key=api_key)
+    return _client
 
 
 def _call_groq(prompt: str, max_tokens: int = 512) -> str:
-    response = client.chat.completions.create(
+    response = _get_client().chat.completions.create(
         model=_MODEL,
         messages=[{"role": "user", "content": prompt}],
         timeout=20,
@@ -74,11 +71,11 @@ def _valid(q) -> bool:
     return True
 
 
-#  GRADING 
+# ── GRADING ───────────────────────────────────────────────────────────────────
 async def grade_answer(topic: str, question: str, student_answer: str, correct_answer: str) -> dict:
     prompt = (f'Grade this answer. Topic: {topic}\nQ: {question}\n'
-            f'Correct: {correct_answer}\nStudent: {student_answer}\n'
-            f'Reply ONLY with JSON: {{"correct":true,"reason":"why"}}')
+              f'Correct: {correct_answer}\nStudent: {student_answer}\n'
+              f'Reply ONLY with JSON: {{"correct":true,"reason":"why"}}')
     try:
         raw = await asyncio.to_thread(_call_groq, prompt, 120)
         r = _extract_json(raw) or {}
@@ -87,17 +84,17 @@ async def grade_answer(topic: str, question: str, student_answer: str, correct_a
         return {"correct": student_answer.strip().lower() == correct_answer.strip().lower(), "reason": ""}
 
 
-#  FEEDBACK
+# ── FEEDBACk ──────────────────────────────────────────────────────────────────
 async def generate_feedback(topic: str, question: str, student_answer: str,
-                            correct_answer: str, is_correct: bool) -> str:
+                             correct_answer: str, is_correct: bool) -> str:
     if is_correct:
         prompt = (f'The student answered correctly. Topic: {topic}\nQ: {question}\n'
-                f'Their answer: {student_answer}\nCorrect: {correct_answer}\n'
-                f'Write 1-2 warm sentences confirming they are right and briefly why.')
+                  f'Their answer: {student_answer}\nCorrect: {correct_answer}\n'
+                  f'Write 1-2 warm sentences confirming they are right and briefly why.')
     else:
         prompt = (f'The student answered incorrectly. Topic: {topic}\nQ: {question}\n'
-                f'Their answer: {student_answer}\nCorrect: {correct_answer}\n'
-                f'Write 2-3 kind sentences: acknowledge any partial credit, state the correct answer, explain briefly. No bullet points.')
+                  f'Their answer: {student_answer}\nCorrect: {correct_answer}\n'
+                  f'Write 2-3 kind sentences: acknowledge any partial credit, state the correct answer, explain briefly. No bullet points.')
     try:
         fb = await asyncio.to_thread(_call_groq, prompt, 180)
         return fb or f"The correct answer is: {correct_answer}"
@@ -105,7 +102,7 @@ async def generate_feedback(topic: str, question: str, student_answer: str,
         return f"The correct answer is: {correct_answer}"
 
 
-#  SINGLE QUESTION 
+# ── SINGLE QUESTION ───────────────────────────────────────────────────────────
 async def generate_question(topic: str, difficulty: str = "medium", exclude: list = None) -> dict | None:
     excl_clause = ""
     if exclude:
@@ -113,8 +110,8 @@ async def generate_question(topic: str, difficulty: str = "medium", exclude: lis
         excl_clause = "\nAvoid these:\n" + "\n".join(f"- {q}" for q in sample)
 
     prompt = (f'Write one {difficulty} quiz question about "{topic}".{excl_clause}\n'
-            f'JSON only, no extra text:\n'
-            f'{{"question":"...","correct_answer":"...","hint":"..."}}')
+              f'JSON only, no extra text:\n'
+              f'{{"question":"...","correct_answer":"...","hint":"..."}}')
 
     for _ in range(3):
         try:
@@ -128,7 +125,7 @@ async def generate_question(topic: str, difficulty: str = "medium", exclude: lis
     return None
 
 
-#  BATCH GENERATION
+# ── BATCH GENERATION ─────────────────────────────────────────────────────────
 async def generate_questions_batch(topic: str, difficulty: str, count: int,
                                     existing: list = None) -> list:
     """
@@ -141,9 +138,9 @@ async def generate_questions_batch(topic: str, difficulty: str, count: int,
         excl_clause = "\nDo NOT repeat:\n" + "\n".join(f"- {q}" for q in excl)
 
     prompt = (f'Write exactly {count} different {difficulty} quiz questions about "{topic}".\n'
-            f'Each question must test a DIFFERENT concept.{excl_clause}\n'
-            f'JSON array only, no other text:\n'
-            f'[{{"question":"...","correct_answer":"...","hint":"..."}},...]')
+              f'Each question must test a DIFFERENT concept.{excl_clause}\n'
+              f'JSON array only, no other text:\n'
+              f'[{{"question":"...","correct_answer":"...","hint":"..."}},...]')
 
     for attempt in range(3):
         try:
@@ -170,7 +167,7 @@ async def generate_questions_batch(topic: str, difficulty: str, count: int,
             pass
         await asyncio.sleep(0.3)
 
-    # Full fallback — individual calls
+    # Full fallback — individual call
     seen = set(existing or [])
     questions = []
     tasks = [generate_question(topic, difficulty, exclude=list(seen)) for _ in range(count)]
