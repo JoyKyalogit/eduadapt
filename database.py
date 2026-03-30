@@ -1,15 +1,18 @@
 
-import os
+import os 
 import asyncpg
 from dotenv import load_dotenv
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+print(f"=== DATABASE_URL === '{DATABASE_URL}'")  # add this
+
 # Railway/Heroku sometimes gives postgres:// — asyncpg needs postgresql://
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-class Database:
+class Database: 
     def __init__(self):
         self.pool = None
 
@@ -43,7 +46,7 @@ async def create_tables():
                 class_name TEXT NOT NULL DEFAULT 'General',
                 joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
-        """)
+        """)    
 
         # Quiz Results
         await conn.execute("""
