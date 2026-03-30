@@ -1,18 +1,14 @@
-
 import os 
 import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv(override=False)
 
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-
-# Railway/Heroku sometimes gives postgres:// — asyncpg needs postgresql://
-if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = int(os.getenv("DB_PORT", 25777))
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME", "defaultdb")
 class Database: 
     def __init__(self):
         self.pool = None
