@@ -6,19 +6,8 @@ from dotenv import load_dotenv
 load_dotenv(override=False)
 
 
-
-# TEMPORARY TEST - hardcoded to bypass Railway variable issues
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-print(f"=== URL START === '{DATABASE_URL[:40]}'")
-
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-
-
-print(f"=== DATABASE_URL === '{DATABASE_URL}'")  # add this
 
 # Railway/Heroku sometimes gives postgres:// — asyncpg needs postgresql://
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
