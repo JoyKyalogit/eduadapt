@@ -2,10 +2,10 @@
 import os 
 import asyncpg
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=False)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+
 print(f"=== DATABASE_URL === '{DATABASE_URL}'")  # add this
 
 # Railway/Heroku sometimes gives postgres:// — asyncpg needs postgresql://
