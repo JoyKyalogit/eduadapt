@@ -9,13 +9,24 @@ DB_PORT = int(os.getenv("DB_PORT", 25777))
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME", "defaultdb")
+
 class Database: 
     def __init__(self):
         self.pool = None
 
     async def connect(self):
         try:
-            self.pool = await asyncpg.create_pool(DATABASE_URL, min_size=1, max_size=10, timeout=10)
+            self.pool = await asyncpg.create_pool(
+                host=DB_HOST,
+                port=DB_PORT,
+                user=DB_USER,
+                password=DB_PASSWORD,
+                database=DB_NAME,
+                ssl="require",
+                min_size=1,
+                max_size=10,
+                timeout=10
+            )
             print("Database connected successfully")
         except Exception as e:
             print(f"Database connection failed: {e}")
