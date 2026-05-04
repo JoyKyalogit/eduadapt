@@ -2,6 +2,10 @@
 
 EduAdapt is an AI-powered learning system designed for classroom use. It supports the full learning loop: teachers create assignments, students answer questions, AI evaluates responses, and analytics show learning progress over time.
 
+## Live Demo
+
+- [EduAdapt on Render](https://eduadapt-api.onrender.com)
+
 ## What the system is about
 
 EduAdapt helps schools move from one-time grading to continuous learning insights.
