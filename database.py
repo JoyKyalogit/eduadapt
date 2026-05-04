@@ -1,35 +1,65 @@
-import os 
+import os
+from urllib.parse import unquote, urlparse
+
 import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv(override=False)
-print("DB_HOST:", os.getenv("DB_HOST"))
-print("DB_USER:", os.getenv("DB_USER"))
-print("DB_PORT:", os.getenv("DB_PORT"))
+
+
+def _database_url_params():
+    """Parse DATABASE_URL (e.g. Render Blueprint connectionString) for asyncpg."""
+    url = (os.getenv("DATABASE_URL") or "").strip()
+    if not url:
+        return None
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://") :]
+    parsed = urlparse(url)
+    if not parsed.hostname:
+        return None
+    return {
+        "user": unquote(parsed.username or ""),
+        "password": unquote(parsed.password or ""),
+        "host": parsed.hostname,
+        "port": parsed.port or 5432,
+        "database": (parsed.path or "/").lstrip("/") or "postgres",
+    }
+
 
 DB_HOST = os.getenv("DB_HOST")
-DB_PORT = int(os.getenv("DB_PORT", 25777))
+DB_PORT = int(os.getenv("DB_PORT", "25777"))
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME", "defaultdb")
 
-class Database: 
+
+class Database:
     def __init__(self):
         self.pool = None
 
     async def connect(self):
         try:
-            self.pool = await asyncpg.create_pool(
-                host=DB_HOST,
-                port=DB_PORT,
-                user=DB_USER,
-                password=DB_PASSWORD,
-                database=DB_NAME,
-                ssl="require",
-                min_size=1,
-                max_size=10,
-                timeout=10
-            )
+            url_cfg = _database_url_params()
+            if url_cfg:
+                self.pool = await asyncpg.create_pool(
+                    **url_cfg,
+                    ssl="require",
+                    min_size=1,
+                    max_size=10,
+                    timeout=10,
+                )
+            else:
+                self.pool = await asyncpg.create_pool(
+                    host=DB_HOST,
+                    port=DB_PORT,
+                    user=DB_USER,
+                    password=DB_PASSWORD,
+                    database=DB_NAME,
+                    ssl="require",
+                    min_size=1,
+                    max_size=10,
+                    timeout=10,
+                )
             print("Database connected successfully")
         except Exception as e:
             print(f"Database connection failed: {e}")
