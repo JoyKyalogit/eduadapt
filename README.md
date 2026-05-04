@@ -1,52 +1,113 @@
 # EduAdapt
 
-EduAdapt is a small **AI-assisted learning platform**: teachers and students sign up, complete assignments and practice, and get **Groq-powered** question generation, grading, and feedback. A **FastAPI** backend stores data in **PostgreSQL** and can serve the static UI from the `Frontend/` folder at `/`.
+EduAdapt is an AI-powered learning system designed for classroom use. It supports the full learning loop: teachers create assignments, students answer questions, AI evaluates responses, and analytics show learning progress over time.
 
-## Stack
+## What the system is about
 
-| Layer | Technology |
-|--------|------------|
-| API | [FastAPI](https://fastapi.tiangolo.com/), [Uvicorn](https://www.uvicorn.org/) |
-| Database | [PostgreSQL](https://www.postgresql.org/) via [asyncpg](https://magicstack.github.io/asyncpg/) |
-| AI | [Groq](https://groq.com/) API (`llama-3.1-8b-instant` in `ai_service.py`) |
-| Config | [python-dotenv](https://pypi.org/project/python-dotenv/) |
+EduAdapt helps schools move from one-time grading to continuous learning insights.
 
-## Features (high level)
+- **Teachers** can assign work by topic and difficulty, then monitor class performance.
+- **Students** can complete assignments and self-practice with instant feedback.
+- **AI** generates questions, grades answers, and explains results.
+- **Analytics** surface struggling learners, difficult topics, and improvement trends.
 
-- Student and teacher accounts (hashed passwords).
-- AI-generated and manual assignments; submissions graded with feedback.
-- Practice sessions and stored quiz results.
-- Teacher analytics (e.g. struggling students, topics, improvement trends).
+The core idea is adaptive learning: use each answer to guide what happens next.
 
-Interactive API documentation is available at **`/docs`** when the server is running.
+## How the system works
 
-## Prerequisites
+### 1) Account and role flow
 
-- Python **3.10+** (recommended)
-- A **PostgreSQL** instance you can reach with SSL (`ssl=require` in code).
-- A **Groq API key** from the [Groq Console](https://console.groq.com/).
+Users join as either **teacher** or **student**. Authentication is role-aware, and passwords are stored as hashes.
 
-## Local setup
+### 2) Assignment flow
+
+A teacher creates an assignment by selecting:
+
+- topic
+- difficulty
+- class
+- one or more students
+
+Assignments can be:
+
+- **AI-generated** (questions produced in batch)
+- **Manual** (teacher-provided questions)
+
+Each selected student gets assignment entries tracked with status (`pending` -> `completed`).
+
+### 3) Submission and grading flow
+
+When a student submits an answer, the system:
+
+1. grades correctness with AI,
+2. generates AI feedback,
+3. stores student answer, score outcome, time taken, and feedback,
+4. marks the assignment completed.
+
+### 4) Practice flow
+
+Students can request practice questions outside formal assignments. Practice sessions are saved separately, so teachers can distinguish class tasks from self-study.
+
+### 5) Analytics flow
+
+Teacher analytics aggregate completed assignment data to answer questions like:
+
+- Which students are struggling?
+- Which topics are hardest?
+- Who is improving over time?
+
+## Architecture overview
+
+EduAdapt is a FastAPI backend with a modular structure:
+
+- `main.py`: API routes and orchestration logic
+- `database.py`: PostgreSQL connection pool, table creation, and migrations
+- `ai_service.py`: Groq integration for generation, grading, feedback
+- `models.py`: Pydantic schemas for request validation
+- `analytics.py`: SQL aggregation logic for reports
+- `Frontend/`: optional static UI served by FastAPI at `/`
+
+## Data and infrastructure
+
+- **Database**: PostgreSQL via `asyncpg`
+- **AI provider**: Groq API
+- **Config**: environment variables (`DATABASE_URL` or `DB_*`), plus `GROQ_API_KEY`
+- **Runtime**: Uvicorn/FastAPI
+
+## Tech stack
+
+- Python
+- FastAPI
+- asyncpg
+- Pydantic
+- python-dotenv
+- Groq API
+
+## Run locally
 
 ```bash
 git clone https://github.com/JoyKyalogit/eduadapt.git
 cd eduadapt
 python -m venv .venv
-.venv\Scripts\activate          # Windows
-# source .venv/bin/activate     # macOS / Linux
+.venv\Scripts\activate
 pip install -r requirements.txt
+uvicorn main:app --reload
 ```
 
-Create a `.env` file in the project root (do not commit secrets). You can use **either** a single URL **or** discrete variables.
+Open `http://127.0.0.1:8000/docs` to explore endpoints.
 
-**Option A — URL (matches Render Blueprint):**
+## Environment variables
+
+Use either of these approaches:
+
+### Option A: single connection URL
 
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE
 GROQ_API_KEY=your_groq_api_key
 ```
 
-**Option B — discrete variables:**
+### Option B: individual database values
 
 ```env
 DB_HOST=your_host
@@ -57,40 +118,27 @@ DB_NAME=your_database
 GROQ_API_KEY=your_groq_api_key
 ```
 
-Start the API:
-
-```bash
-uvicorn main:app --reload
-```
-
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000) (or [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for Swagger). If `Frontend/index.html` exists, `/` serves that UI.
-
 ## Deploy on Render
 
-This repo includes **`render.yaml`** ([Render Blueprint](https://render.com/docs/blueprint-spec)):
+This repository includes `render.yaml` for Render Blueprint deployment.
 
-- **PostgreSQL:** `eduadapt-db`
-- **Web service:** `eduadapt-api` — `pip install -r requirements.txt`, then `uvicorn main:app --host 0.0.0.0 --port $PORT`
-- **`DATABASE_URL`** is wired from the database **`connectionString`**
-- **`GROQ_API_KEY`** is marked `sync: false`; Render prompts you on first apply
+It defines:
 
-**New → Blueprint** in the [Render Dashboard](https://dashboard.render.com), connect this repository, apply the blueprint, and set **`GROQ_API_KEY`** when asked.
+- Postgres service: `eduadapt-db`
+- Web service: `eduadapt-api`
+- Build command: `pip install -r requirements.txt`
+- Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+- `DATABASE_URL` injected from Render Postgres `connectionString`
+- `GROQ_API_KEY` prompted securely via `sync: false`
 
-> **Free Postgres limit:** Render allows only **one active free-tier PostgreSQL** per workspace. If blueprint database creation fails with that message, remove an unused free database or use a paid instance, then sync again.
+Deploy via Render Dashboard -> **New -> Blueprint** -> select this repo.
 
-## Project layout
+## Current status and notes
 
-| Path | Role |
-|------|------|
-| `main.py` | FastAPI routes and app lifespan |
-| `database.py` | Connection pool, schema creation, migrations |
-| `models.py` | Pydantic request/response models |
-| `ai_service.py` | Groq: questions, grading, feedback |
-| `analytics.py` | Teacher-side analytics helpers |
-| `Frontend/` | Static frontend (optional), mounted when present |
-| `Procfile` | `web: uvicorn main:app --host 0.0.0.0 --port $PORT` |
-| `render.yaml` | Render Blueprint (optional IaC) |
+- The system is API-first and works with or without the static frontend.
+- Tables are created automatically at startup if missing.
+- Keep secrets out of Git commits (`.env` should remain local).
 
 ## License
 
-No license file is included in this repository yet; add one if you intend to open-source under specific terms.
+No license file is included yet.
