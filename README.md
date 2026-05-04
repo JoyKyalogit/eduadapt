@@ -4,7 +4,7 @@ EduAdapt is an AI-powered learning system designed for classroom use. It support
 
 ## Live Demo
 
-- [EduAdapt on Render](https://eduadapt-api.onrender.com)
+https://eduadapt-api.onrender.com
 
 ## What the system is about
 
