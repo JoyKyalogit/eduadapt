@@ -789,7 +789,7 @@ async function startPracticeSession(){
     document.getElementById('practice-quiz-area').style.display='block';
   }catch(e){
     console.error('Practice error:',e);
-    showMsg('quiz-msg','Could not generate question. Check the API is running.','err');
+    showMsg('quiz-msg',e.message||'Could not generate question. Please try again.','err');
     PS.active=false;
     document.getElementById('practice-quiz-area').style.display='none';
   }finally{btn.innerHTML='Start Session';btn.disabled=false;}
@@ -811,16 +811,24 @@ async function loadNextQuestion(){
   timerInterval=setInterval(()=>{document.getElementById('q-timer').textContent=Math.floor((Date.now()-timerStart)/1000)+'s';},1000);
   // Pass ALL questions asked so far this session as exclusions
   const alreadyAsked=PS.questions.map(q=>q&&q.question).filter(Boolean);
-  const res=await fetch(`${API}/generate-question`,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({topic:PS.topic,difficulty:PS.diff,exclude:alreadyAsked})
-  });
-  if(!res.ok) throw new Error('API returned '+res.status);
-  const q=await res.json();
-  if(!q||!q.question) throw new Error('No question in response');
-  PS.questions[PS.current]=q;
-  document.getElementById('q-question').textContent=q.question;
+  let lastErr='Could not generate question. Please try again.';
+  for(let attempt=0;attempt<3;attempt++){
+    const res=await fetch(`${API}/generate-question`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic:PS.topic,difficulty:PS.diff,exclude:alreadyAsked})
+    });
+    let data=null;
+    try{data=await res.json();}catch(_){data=null;}
+    if(res.ok&&data&&data.question){
+      PS.questions[PS.current]=data;
+      document.getElementById('q-question').textContent=data.question;
+      return;
+    }
+    lastErr=(data&&data.detail)||('API returned '+res.status);
+    await new Promise(r=>setTimeout(r,700*(attempt+1)));
+  }
+  throw new Error(lastErr);
 }
 
 async function submitPracticeAnswer(){
