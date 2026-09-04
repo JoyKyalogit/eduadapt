@@ -15,14 +15,11 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);co
 #page-home{flex-direction:column;align-items:center;justify-content:flex-start;background:linear-gradient(160deg,var(--navy-mid),var(--navy));padding:56px 20px 64px;position:relative;overflow-x:hidden;overflow-y:auto;}
 #page-home::before{content:'';position:absolute;top:-120px;left:-120px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.07),transparent 70%);pointer-events:none;}
 .home-brand{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:8px;text-align:center;}
-.home-tagline{font-size:12px;color:var(--muted);letter-spacing:4px;text-transform:uppercase;margin-bottom:28px;}
-.home-hero{font-family:'Playfair Display',serif;font-size:46px;line-height:1.15;font-weight:700;text-align:center;margin-bottom:16px;max-width:720px;}
-.home-hero span{color:var(--gold);}
+.home-tagline{font-size:12px;color:var(--muted);letter-spacing:4px;text-transform:uppercase;margin-bottom:20px;}
 .home-desc{font-size:16px;color:rgba(240,244,248,.78);line-height:1.75;text-align:center;max-width:560px;margin-bottom:40px;}
 .home-cards{display:flex;gap:22px;margin-bottom:48px;flex-wrap:wrap;justify-content:center;}
 .home-card{background:rgba(255,255,255,.04);border:1.5px solid rgba(201,168,76,.15);border-radius:14px;padding:32px 28px;width:250px;cursor:pointer;transition:all .25s;text-align:center;}
 .home-card:hover{background:rgba(201,168,76,.07);border-color:var(--gold);transform:translateY(-3px);}
-.home-card-icon{font-size:36px;margin-bottom:14px;}
 .home-card-role{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:7px;}
 .home-card-desc{font-size:13px;color:var(--muted);line-height:1.6;}
 .home-card-btn{margin-top:18px;padding:9px 24px;background:var(--gold);color:var(--navy);border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
@@ -36,7 +33,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);co
 .home-step-title{font-size:15px;font-weight:600;margin-bottom:6px;}
 .home-step-desc{font-size:13px;color:var(--muted);line-height:1.55;}
 @media(max-width:700px){
-  .home-hero{font-size:34px;}
   .home-steps{grid-template-columns:1fr;}
 }
 
@@ -234,20 +230,17 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);co
 <div id="page-home" class="page active">
   <div class="home-brand">EduAdapt</div>
   <div class="home-tagline">Intelligent Learning Platform</div>
-  <h1 class="home-hero">A classroom system that <span>teaches, checks, and tracks.</span></h1>
   <p class="home-desc">EduAdapt connects teachers and students in one place: assign quizzes by topic, practise independently, get AI grading with clear feedback, and see who is improving or struggling.</p>
   <div class="home-cards">
     <div class="home-card" onclick="goToAuth('student')">
-      <div class="home-card-icon">🎓</div>
       <div class="home-card-role">Student</div>
       <div class="home-card-desc">Complete teacher quizzes, run self-practice sessions, and review your progress by topic.</div>
-      <button class="home-card-btn">Enter as Student</button>
+      <button class="home-card-btn">Sign in as Student</button>
     </div>
     <div class="home-card" onclick="goToAuth('teacher')">
-      <div class="home-card-icon">📊</div>
       <div class="home-card-role">Teacher</div>
       <div class="home-card-desc">Create AI or manual quizzes, assign them to classes, and monitor results in real time.</div>
-      <button class="home-card-btn">Enter as Teacher</button>
+      <button class="home-card-btn">Sign in as Teacher</button>
     </div>
   </div>
   <section class="home-how" aria-label="How EduAdapt works">
@@ -335,7 +328,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);co
     <!-- ── STUDENT: SELF-PRACTICE ── -->
     <div id="section-practice" class="section">
       <div class="section-hd">
-        <div><div class="section-title">Self-Practice</div><div class="section-sub">Personal practice — results visible only to you</div></div>
+        <div><div class="section-title">Self-Practice</div><div class="section-sub">Personal practice</div></div>
       </div>
       <div class="practice-layout">
         <div>
@@ -386,7 +379,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);co
     <!-- ── STUDENT: MY PROGRESS ── -->
     <div id="section-progress" class="section">
       <div class="section-hd">
-        <div><div class="section-title">My Progress</div><div class="section-sub">Assignment performance only</div></div>
+        <div><div class="section-title">My Progress</div><div class="section-sub">Assignment performance</div></div>
       </div>
       <div class="g3" style="margin-bottom:18px" id="progress-insights"></div>
       <div class="card">
