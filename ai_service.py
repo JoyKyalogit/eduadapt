@@ -27,9 +27,11 @@ def _call_groq(prompt: str, max_tokens: int = 512) -> str:
         messages=[{"role": "user", "content": prompt}],
         timeout=20,
         max_tokens=max_tokens,
-        temperature=0.95,
+        temperature=0.4,
+        reasoning_effort="low",
+        include_reasoning=False,
     )
-    return response.choices[0].message.content.strip()
+    return (response.choices[0].message.content or "").strip()
 
 
 def _extract_json(raw: str, expect_array: bool = False):
@@ -110,19 +112,18 @@ async def generate_question(topic: str, difficulty: str = "medium", exclude: lis
         sample = exclude[-6:]
         excl_clause = "\nAvoid these:\n" + "\n".join(f"- {q}" for q in sample)
 
-    prompt = (f'Write one {difficulty} quiz question about "{topic}".{excl_clause}\n'
-              f'JSON only, no extra text:\n'
+    prompt = (f'Write one short {difficulty} quiz question about "{topic}".{excl_clause}\n'
+              f'Return ONLY compact JSON (no markdown):\n'
               f'{{"question":"...","correct_answer":"...","hint":"..."}}')
 
-    for _ in range(3):
+    for _ in range(2):
         try:
-            raw = await asyncio.to_thread(_call_groq, prompt, 256)
+            raw = await asyncio.to_thread(_call_groq, prompt, 180)
             q = _extract_json(raw)
             if _valid(q):
                 return q
         except Exception:
             pass
-        await asyncio.sleep(0.2)
     return None
 
 

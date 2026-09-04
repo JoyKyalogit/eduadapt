@@ -811,24 +811,19 @@ async function loadNextQuestion(){
   timerInterval=setInterval(()=>{document.getElementById('q-timer').textContent=Math.floor((Date.now()-timerStart)/1000)+'s';},1000);
   // Pass ALL questions asked so far this session as exclusions
   const alreadyAsked=PS.questions.map(q=>q&&q.question).filter(Boolean);
-  let lastErr='Could not generate question. Please try again.';
-  for(let attempt=0;attempt<3;attempt++){
-    const res=await fetch(`${API}/generate-question`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic:PS.topic,difficulty:PS.diff,exclude:alreadyAsked})
-    });
-    let data=null;
-    try{data=await res.json();}catch(_){data=null;}
-    if(res.ok&&data&&data.question){
-      PS.questions[PS.current]=data;
-      document.getElementById('q-question').textContent=data.question;
-      return;
-    }
-    lastErr=(data&&data.detail)||('API returned '+res.status);
-    await new Promise(r=>setTimeout(r,700*(attempt+1)));
+  const res=await fetch(`${API}/generate-question`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({topic:PS.topic,difficulty:PS.diff,exclude:alreadyAsked})
+  });
+  let data=null;
+  try{data=await res.json();}catch(_){data=null;}
+  if(res.ok&&data&&data.question){
+    PS.questions[PS.current]=data;
+    document.getElementById('q-question').textContent=data.question;
+    return;
   }
-  throw new Error(lastErr);
+  throw new Error((data&&data.detail)||('Could not generate question (HTTP '+res.status+')'));
 }
 
 async function submitPracticeAnswer(){

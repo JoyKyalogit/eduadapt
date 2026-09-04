@@ -214,12 +214,10 @@ async def get_generated_question(topic: str, difficulty: str = "medium", exclude
 @app.post("/generate-question")
 async def post_generated_question(data: GenerateQuestionRequest):
     """POST version — supports large exclude lists without URL length limits."""
-    # Try up to 5 times total before giving up
-    for attempt in range(5):
+    for _ in range(2):
         result = await generate_question(data.topic, data.difficulty, exclude=data.exclude)
         if result and result.get("question") and result.get("correct_answer"):
             return result
-        await asyncio.sleep(0.3)
     raise HTTPException(503, "Could not generate question after multiple attempts. Please try again.")
 
 
