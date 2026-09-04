@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_MODEL = "llama-3.1-8b-instant"
+# llama-3.1-8b-instant was shut down by Groq (2026-08-16); use recommended replacement
+_MODEL = "openai/gpt-oss-20b"
 _client = None
 
 def _get_client():
